@@ -1,4 +1,7 @@
-// WASD in Grid Demo
+//Grid Assignment
+//Donovan Simmons.
+//Nov 12, 2019
+
 
 //Settings for grid, player coordinates, images for aesthetic (doesn't work).
 let grid;
@@ -34,6 +37,16 @@ function setup() {
   grid[playerOneY][playerOneX] = "player one";
   grid[playerTwoY][playerTwoX] = "player two";
   cellSize = width / cols;
+}
+
+class BombOne {
+  constructor(x, y, range){
+
+    this.x = playerOneX * cellSize;
+    this.y = playerOneY * cellSize;
+    this.range = range;
+  }
+  
 }
 
 //Draws grid, players, bombs
