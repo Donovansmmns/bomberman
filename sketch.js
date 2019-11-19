@@ -7,6 +7,8 @@
 let grid;
 let rows = 9;
 let cols = 9;
+let playerOne;
+let playerTwo;
 let playerOneX = 0;
 let playerOneY = 0;
 
@@ -17,7 +19,7 @@ let cellSize;
 let wall;
 let breakable;
 let bomb;
-
+let rangeUp = 3;
 //Preloads images for aesthetic, only bomb works.
 function preload(){
   wall = loadImage("assets/wall.png");
@@ -33,6 +35,7 @@ function setup() {
   else {
     createCanvas(windowWidth, windowWidth);
   }
+
   grid = createEmptyGrid(cols, rows);
   grid[playerOneY][playerOneX] = "player one";
   grid[playerTwoY][playerTwoX] = "player two";
@@ -41,19 +44,41 @@ function setup() {
 
 class BombOne {
   constructor(x, y, range){
-
+    
     this.x = playerOneX * cellSize;
     this.y = playerOneY * cellSize;
-    this.range = range;
+    this.fillColor = color("orange");
+    this.size = cellSize;
+    this.range = cellSize*rangeUp;
+    
   }
-  
+  display(){
+    if (key === " "){
+      fill(this.fillColor);
+      rect(this.x, this.y, this.size, this.size);
+      rect(this.x - this.range, this.y, this.size, this.size); //bomb explosion left
+      rect(this.x + this.range, this.y, this.size, this.size); //bomb explosion right
+      rect(this.x, this.y - this.range, this.size, this.size); //bomb explosion above
+      rect(this.x, this.y + this.range, this.size, this.size); //bomb explosion below
+
+      for (let i = this.range; i > rangeUp; i--){
+        rect(this.x -this.range + cellSize, this.y, this.size, this.size)
+        rect(this.x + this.range - cellSize, this.y, this.size, this.size);
+        rect(this.x, this.y - this.range + cellSize, this.size, this.size);
+        rect(this.x, this.y + this.range - cellSize, this.size, this.size);
+      }
+    }
+  }
 }
+
 
 //Draws grid, players, bombs
 function draw() {
   background(220);
   displayGrid(grid, rows, cols);
-  playerOneBomb();
+  playerOne = new BombOne(playerOneX, playerOneY, 1);
+
+  playerOne.display();
   playerTwoBomb();
 }
 
