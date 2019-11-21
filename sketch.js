@@ -49,24 +49,25 @@ class BombOne {
     this.y = playerOneY * cellSize;
     this.fillColor = color("orange");
     this.size = cellSize;
-    this.range = cellSize*rangeUp;
+    this.range = cellSize * rangeUp;
     
   }
   display(){
     if (key === " "){
       fill(this.fillColor);
       rect(this.x, this.y, this.size, this.size);
+
       rect(this.x - this.range, this.y, this.size, this.size); //bomb explosion left
       rect(this.x + this.range, this.y, this.size, this.size); //bomb explosion right
       rect(this.x, this.y - this.range, this.size, this.size); //bomb explosion above
       rect(this.x, this.y + this.range, this.size, this.size); //bomb explosion below
 
-      for (let i = this.range; i > rangeUp; i--){
-        rect(this.x -this.range + cellSize, this.y, this.size, this.size)
-        rect(this.x + this.range - cellSize, this.y, this.size, this.size);
-        rect(this.x, this.y - this.range + cellSize, this.size, this.size);
-        rect(this.x, this.y + this.range - cellSize, this.size, this.size);
-      }
+      for (let i = 0; i < rangeUp; i++){
+        rect(this.x -this.range * i + cellSize, this.y, this.size, this.size)
+        rect(this.x + this.range * i - cellSize, this.y, this.size, this.size);
+        rect(this.x, this.y - this.range * i + cellSize, this.size, this.size);
+        rect(this.x, this.y + this.range * i - cellSize, this.size, this.size);
+      } 
     }
   }
 }
@@ -166,7 +167,7 @@ function displayGrid(grid, rows, cols) {
         fill(255);
       }
       else{
-        grid[y][x] = "breakable object";  
+        grid[y][x] = "open space";  
         // image(breakable, x * cellSize, y * cellSize, cellSize, cellSize)
         fill("gray")
       }
