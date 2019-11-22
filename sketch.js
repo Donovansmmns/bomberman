@@ -3,18 +3,19 @@
 //Nov 12, 2019
 
 
-//Settings for grid, player coordinates, images for aesthetic (doesn't work).
+//Settings for grid, player coordinates.
 let grid;
 let rows = 9;
 let cols = 9;
+let cellSize;
+
 let playerOne;
 let playerTwo;
+
 let playerOneX = 0;
 let playerOneY = 0;
-
 let playerTwoX = 8;
 let playerTwoY = 8;
-let cellSize;
 
 let wall;
 let breakable;
@@ -43,7 +44,7 @@ function setup() {
 }
 
 class BombOne {
-  constructor(x, y, range){
+  constructor(x, y){
     
     this.x = playerOneX * cellSize;
     this.y = playerOneY * cellSize;
@@ -63,10 +64,10 @@ class BombOne {
       rect(this.x, this.y + this.range, this.size, this.size); //bomb explosion below
 
       for (let i = 0; i < rangeUp; i++){
-        rect(this.x -this.range * i + cellSize, this.y, this.size, this.size)
-        rect(this.x + this.range * i - cellSize, this.y, this.size, this.size);
-        rect(this.x, this.y - this.range * i + cellSize, this.size, this.size);
-        rect(this.x, this.y + this.range * i - cellSize, this.size, this.size);
+        rect(this.x -this.range * i + cellSize* 2, this.y, this.size, this.size)
+        rect(this.x + this.range * i - cellSize * 2, this.y, this.size, this.size);
+        rect(this.x, this.y - this.range * i + cellSize* 2, this.size, this.size);
+        rect(this.x, this.y + this.range * i - cellSize * 2, this.size, this.size);
       } 
     }
   }
@@ -77,7 +78,7 @@ class BombOne {
 function draw() {
   background(220);
   displayGrid(grid, rows, cols);
-  playerOne = new BombOne(playerOneX, playerOneY, 1);
+  playerOne = new BombOne(playerOneX, playerOneY);
 
   playerOne.display();
   playerTwoBomb();
