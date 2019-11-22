@@ -20,7 +20,7 @@ let playerTwoY = 8;
 let wall;
 let breakable;
 let bomb;
-let rangeUp = 3;
+let rangeUp = 0;
 //Preloads images for aesthetic, only bomb works.
 function preload(){
   wall = loadImage("assets/wall.png");
@@ -57,17 +57,17 @@ class BombOne {
     if (key === " "){
       fill(this.fillColor);
       rect(this.x, this.y, this.size, this.size);
-
-      rect(this.x - this.range, this.y, this.size, this.size); //bomb explosion left
-      rect(this.x + this.range, this.y, this.size, this.size); //bomb explosion right
-      rect(this.x, this.y - this.range, this.size, this.size); //bomb explosion above
-      rect(this.x, this.y + this.range, this.size, this.size); //bomb explosion below
-
-      for (let i = 0; i < rangeUp; i++){
-        rect(this.x -this.range * i + cellSize* 2, this.y, this.size, this.size)
-        rect(this.x + this.range * i - cellSize * 2, this.y, this.size, this.size);
-        rect(this.x, this.y - this.range * i + cellSize* 2, this.size, this.size);
-        rect(this.x, this.y + this.range * i - cellSize * 2, this.size, this.size);
+      
+      for (let i = 0; i <= rangeUp; i++){
+        let explosion = (this.size * i + cellSize)
+        rect(this.x -explosion, this.y, this.size, this.size);  //bomb left
+        rect(this.x + explosion, this.y, this.size, this.size); //bomb right
+        rect(this.x, this.y - explosion, this.size, this.size); //bomb up
+        rect(this.x, this.y + explosion, this.size, this.size); //bomb down
+        grid[this.y][this.x] = "bomb";  
+                                        // <- and v are WIP
+        // grid[this.x][this.y] = "bomb";              
+        // grid[this.y-(this.size*i+cellSize)][this.x] = "explosion";
       } 
     }
   }
@@ -79,8 +79,8 @@ function draw() {
   background(220);
   displayGrid(grid, rows, cols);
   playerOne = new BombOne(playerOneX, playerOneY);
-
   playerOne.display();
+
   playerTwoBomb();
 }
 
