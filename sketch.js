@@ -64,10 +64,11 @@ class BombOne {
         rect(this.x + explosion, this.y, this.size, this.size); //bomb right
         rect(this.x, this.y - explosion, this.size, this.size); //bomb up
         rect(this.x, this.y + explosion, this.size, this.size); //bomb down
-        grid[this.y][this.x] = "bomb";  
-                                        // <- and v are WIP
-        // grid[this.x][this.y] = "bomb";              
-        // grid[this.y-(this.size*i+cellSize)][this.x] = "explosion";
+                                       
+        grid[this.y][this.x] = "bomb";
+        // grid[this.x][this.y] = "bomb";                             // WIP        
+        // console.log(grid[this.y][this.x])                          // WIP
+        // grid[this.y-(this.size*i+cellSize)][this.x] = "explosion"; // WIP
       } 
     }
   }
