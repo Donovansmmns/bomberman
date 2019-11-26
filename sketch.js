@@ -46,8 +46,8 @@ function setup() {
 class BombOne {
   constructor(x, y){
     
-    this.x = playerOneX * cellSize;
-    this.y = playerOneY * cellSize;
+    this.x = x;
+    this.y = y;
     this.fillColor = color("orange");
     this.size = cellSize;
     this.range = cellSize * rangeUp;
@@ -64,11 +64,26 @@ class BombOne {
         rect(this.x + explosion, this.y, this.size, this.size); //bomb right
         rect(this.x, this.y - explosion, this.size, this.size); //bomb up
         rect(this.x, this.y + explosion, this.size, this.size); //bomb down
-                                       
-        grid[this.y][this.x] = "bomb";
-        // grid[this.x][this.y] = "bomb";                             // WIP        
-        // console.log(grid[this.y][this.x])                          // WIP
-        // grid[this.y-(this.size*i+cellSize)][this.x] = "explosion"; // WIP
+        
+        let gridLocationX = floor(this.x / cellSize);
+        let gridLocationY = floor(this.y / cellSize);
+        let gridLeftExplosion = floor((this.x / cellSize - 1) - i)
+        let gridRightExplosion = floor((this.x / cellSize + 1) + i)
+        let gridUpExplosion = floor((this.y / cellSize - 1) - i)
+        let gridDownExplosion = floor((this.y / cellSize + 1) + i)
+        grid[gridLocationY][gridLocationX] = "bomb";
+        if (this.x > 0){
+          grid[gridLocationY][gridLeftExplosion] = "explosion";
+        }
+        if (this.x < rows * cellSize){  
+          grid[gridLocationY][gridRightExplosion] = "explosion";
+        }
+        if (this.y > 0){
+          grid[gridUpExplosion][gridLocationX] = "explosion";
+        }
+        if (this.y < 9){
+          grid[gridDownExplosion][gridLocationX] = "explosion";
+        }
       } 
     }
   }
@@ -79,7 +94,7 @@ class BombOne {
 function draw() {
   background(220);
   displayGrid(grid, rows, cols);
-  playerOne = new BombOne(playerOneX, playerOneY);
+  playerOne = new BombOne(playerOneX * cellSize, playerOneY * cellSize);
   playerOne.display();
 
   playerTwoBomb();
@@ -182,18 +197,6 @@ function displayGrid(grid, rows, cols) {
   }
 }
 
-//Places a bomb at player one's location, unfinished. Bomb disappears after a key is pressed and doesn't do anything.
-function playerOneBomb(){
-  let bombX = cellSize * playerOneX;
-  let bombY = cellSize * playerOneY;
-  let bombPlanted = false;
-  if (key === " "){
-    bombPlanted = true;
-    if (bombPlanted = true){
-      grid[playerOneY][playerOneX] = image(bomb, bombX, bombY, cellSize, cellSize);
-    }
-  }
-}
 
 //Places a bomb at player two's location, unfinished. Bomb disappears after a key is pressed and doesn't do anything.
 function playerTwoBomb(){
