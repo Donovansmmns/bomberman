@@ -21,11 +21,40 @@ let wall;
 let breakable;
 let bomb;
 let rangeUp = 0;
+
+//NICE TO HAVE
+let spreadsheet;
+let animation1;
+let animation2;
+let animation3;
+let animation4;
+let animation5;
+let animation6;
+let animation7;
+let animation8;
+let animation9;
+let animation10;
+
+
 //Preloads images for aesthetic, only bomb works.
 function preload(){
   wall = loadImage("assets/wall.png");
   breakable = loadImage("assets/breakable_wall.png")
   bomb = loadImage("assets/bomb.jpg")
+  spreadsheet = loadImage("assets/spreadsheet.png")
+  //NICE TO HAVE
+  animation1 = loadImage("assets/animation1.png")
+  animation2 = loadImage("assets/animation2.png")
+  animation3 = loadImage("assets/animation3.png")
+  animation4 = loadImage("assets/animation4.png")
+  animation5 = loadImage("assets/animation5.png")
+  animation6 = loadImage("assets/animation6.png")
+  animation7 = loadImage("assets/animation7.png")
+  animation8 = loadImage("assets/animation8.png")
+  animation9 = loadImage("assets/animation9.png")
+  animation10 = loadImage("assets/animation10.png")
+
+
 }
 
 //Sets grid dimensions and player location.
@@ -43,27 +72,25 @@ function setup() {
   cellSize = width / cols;
 }
 
-class BombOne {
+class Bomb {
   constructor(x, y){
     
     this.x = x;
     this.y = y;
-    this.fillColor = color("orange");
     this.size = cellSize;
     this.range = cellSize * rangeUp;
     
   }
   display(){
     if (key === " "){
-      fill(this.fillColor);
-      rect(this.x, this.y, this.size, this.size);
+      image(bomb, this.x, this.y, this.size, this.size);
       
       for (let i = 0; i <= rangeUp; i++){
         let explosion = (this.size * i + cellSize)
-        rect(this.x -explosion, this.y, this.size, this.size);  //bomb left
-        rect(this.x + explosion, this.y, this.size, this.size); //bomb right
-        rect(this.x, this.y - explosion, this.size, this.size); //bomb up
-        rect(this.x, this.y + explosion, this.size, this.size); //bomb down
+        image(animation1, this.x -explosion, this.y, this.size, this.size); //bombs left
+        image(animation1,this.x + explosion, this.y, this.size, this.size); //bombs right
+        image(animation1,this.x, this.y - explosion, this.size, this.size); //bombs up
+        image(animation1,this.x, this.y + explosion, this.size, this.size); //bombs down
         
         let gridLocationX = floor(this.x / cellSize);
         let gridLocationY = floor(this.y / cellSize);
@@ -71,6 +98,39 @@ class BombOne {
         let gridRightExplosion = floor((this.x / cellSize + 1) + i)
         let gridUpExplosion = floor((this.y / cellSize - 1) - i)
         let gridDownExplosion = floor((this.y / cellSize + 1) + i)
+
+        grid[gridLocationY][gridLocationX] = "bomb";
+        if (this.x > 0){
+          grid[gridLocationY][gridLeftExplosion] = "explosion";
+        }
+        if (this.x < rows * cellSize){  
+          grid[gridLocationY][gridRightExplosion] = "explosion";
+        }
+        if (this.y > 0){
+          grid[gridUpExplosion][gridLocationX] = "explosion";
+        }
+        if (this.y < 9){
+          grid[gridDownExplosion][gridLocationX] = "explosion";
+        }
+      } 
+    }
+  if (keyCode === ENTER){
+    image(bomb, this.x, this.y, this.size, this.size);
+      
+      for (let i = 0; i <= rangeUp; i++){
+        let explosion = (this.size * i + cellSize)
+        image(animation1, this.x -explosion, this.y, this.size, this.size); //bombs left
+        image(animation1,this.x + explosion, this.y, this.size, this.size); //bombs right
+        image(animation1,this.x, this.y - explosion, this.size, this.size); //bombs up
+        image(animation1,this.x, this.y + explosion, this.size, this.size); //bombs down
+        
+        let gridLocationX = floor(this.x / cellSize);
+        let gridLocationY = floor(this.y / cellSize);
+        let gridLeftExplosion = floor((this.x / cellSize - 1) - i)
+        let gridRightExplosion = floor((this.x / cellSize + 1) + i)
+        let gridUpExplosion = floor((this.y / cellSize - 1) - i)
+        let gridDownExplosion = floor((this.y / cellSize + 1) + i)
+
         grid[gridLocationY][gridLocationX] = "bomb";
         if (this.x > 0){
           grid[gridLocationY][gridLeftExplosion] = "explosion";
@@ -94,8 +154,11 @@ class BombOne {
 function draw() {
   background(220);
   displayGrid(grid, rows, cols);
-  playerOne = new BombOne(playerOneX * cellSize, playerOneY * cellSize);
+  playerOne = new Bomb(playerOneX * cellSize, playerOneY * cellSize);
   playerOne.display();
+
+  // playerTwo = new Bomb(playerTwoX * cellSize, playerOneY * cellSize);
+  // playerTwo.display();
 
   playerTwoBomb();
 }
