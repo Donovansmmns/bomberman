@@ -21,6 +21,8 @@ let wall;
 let breakable;
 let bomb;
 let rangeUp = 0;
+let rangeUp1 = 1;
+let rangeUp2 = 0;
 
 //NICE TO HAVE
 let spreadsheet;
@@ -34,7 +36,7 @@ let animation7;
 let animation8;
 let animation9;
 let animation10;
-
+let animation = [animation1, animation2, animation3, animation4, animation5, animation6, animation7, animation8, animation9, animation10];
 
 //Preloads images for aesthetic, only bomb works.
 function preload(){
@@ -73,7 +75,7 @@ function setup() {
 }
 
 class Bomb {
-  constructor(x, y){
+  constructor(x, y, rangeUp){
     
     this.x = x;
     this.y = y;
@@ -83,9 +85,9 @@ class Bomb {
   }
   display(){
     if (key === " "){
-      image(bomb, this.x, this.y, this.size, this.size);
+      image(bomb, this.x, this.y, this.size, this.size);  
       
-      for (let i = 0; i <= rangeUp; i++){
+      for (let i = 0; i <= rangeUp1; i++){
         let explosion = (this.size * i + cellSize)
         image(animation1, this.x -explosion, this.y, this.size, this.size); //bombs left
         image(animation1,this.x + explosion, this.y, this.size, this.size); //bombs right
@@ -107,6 +109,9 @@ class Bomb {
           grid[gridLocationY][gridRightExplosion] = "explosion";
         }
         if (this.y > 0){
+          // if (this.y <= rangeUp1){    WORK ON FIXING ERROR -- EXPLOSION GOES OFF GRID = CRASH
+          //   gridUpExplosion - 1;
+          // }
           grid[gridUpExplosion][gridLocationX] = "explosion";
         }
         if (this.y < 9){
@@ -114,10 +119,13 @@ class Bomb {
         }
       } 
     }
-  if (keyCode === ENTER){
-    image(bomb, this.x, this.y, this.size, this.size);
+  }
+  display2(){
+
+    if (keyCode === ENTER){
+      image(bomb, this.x, this.y, this.size, this.size);
       
-      for (let i = 0; i <= rangeUp; i++){
+      for (let i = 0; i <= rangeUp2; i++){
         let explosion = (this.size * i + cellSize)
         image(animation1, this.x -explosion, this.y, this.size, this.size); //bombs left
         image(animation1,this.x + explosion, this.y, this.size, this.size); //bombs right
@@ -130,7 +138,7 @@ class Bomb {
         let gridRightExplosion = floor((this.x / cellSize + 1) + i)
         let gridUpExplosion = floor((this.y / cellSize - 1) - i)
         let gridDownExplosion = floor((this.y / cellSize + 1) + i)
-
+        
         grid[gridLocationY][gridLocationX] = "bomb";
         if (this.x > 0){
           grid[gridLocationY][gridLeftExplosion] = "explosion";
@@ -154,13 +162,12 @@ class Bomb {
 function draw() {
   background(220);
   displayGrid(grid, rows, cols);
-  playerOne = new Bomb(playerOneX * cellSize, playerOneY * cellSize);
+  playerOne = new Bomb(playerOneX * cellSize, playerOneY * cellSize, rangeUp1);
   playerOne.display();
+  
+  playerTwo = new Bomb(playerTwoX * cellSize, playerTwoY * cellSize, rangeUp2);
+  playerTwo.display2();
 
-  // playerTwo = new Bomb(playerTwoX * cellSize, playerOneY * cellSize);
-  // playerTwo.display();
-
-  playerTwoBomb();
 }
 
 //Adjusts grid to window size.
@@ -261,11 +268,4 @@ function displayGrid(grid, rows, cols) {
 }
 
 
-//Places a bomb at player two's location, unfinished. Bomb disappears after a key is pressed and doesn't do anything.
-function playerTwoBomb(){
-  let bombX = cellSize * playerTwoX;
-  let bombY = cellSize * playerTwoY;
-  if (keyCode === ENTER){
-    grid[playerTwoY][playerTwoX] = image(bomb, bombX, bombY, cellSize, cellSize)
-  }
-}
+
