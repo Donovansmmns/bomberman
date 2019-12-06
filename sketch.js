@@ -20,8 +20,9 @@ let playerTwoY = 8;
 let wall;
 let breakable;
 let bomb;
+
 let rangeUp = 0;
-let rangeUp1 = 1;
+let rangeUp1 = 0;
 let rangeUp2 = 0;
 
 //NICE TO HAVE
@@ -108,11 +109,8 @@ class Bomb {
         if (this.x < rows * cellSize){  
           grid[gridLocationY][gridRightExplosion] = "explosion";
         }
-        if (this.y > 0){
-          // if (this.y <= rangeUp1){    WORK ON FIXING ERROR -- EXPLOSION GOES OFF GRID = CRASH
-          //   gridUpExplosion - 1;
-          // }
-          grid[gridUpExplosion][gridLocationX] = "explosion";
+        if (this.y > 0){                                      // WORK ON FIXING CRASH ERROR IF BOMB EXPLOSION ABOVE ARRAY
+          grid[gridUpExplosion + i][gridLocationX] = "explosion";
         }
         if (this.y < 9){
           grid[gridDownExplosion][gridLocationX] = "explosion";
@@ -147,7 +145,7 @@ class Bomb {
           grid[gridLocationY][gridRightExplosion] = "explosion";
         }
         if (this.y > 0){
-          grid[gridUpExplosion][gridLocationX] = "explosion";
+          grid[gridUpExplosion + i][gridLocationX] = "explosion";
         }
         if (this.y < 9){
           grid[gridDownExplosion][gridLocationX] = "explosion";
