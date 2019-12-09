@@ -82,12 +82,17 @@ class Bomb {
     this.y = y;
     this.size = cellSize;
     this.range = cellSize * rangeUp;
-    
+    this.timer = millis();
   }
   display(){
     if (key === " "){
-      image(bomb, this.x, this.y, this.size, this.size);  
-      
+      image(bomb, this.x, this.y, this.size, this.size);
+  //     if (millis() > this.timer + 1000){
+  //       this.explode();
+  //     }  
+  //   }
+  // }
+  // explode(){
       for (let i = 0; i <= rangeUp1; i++){
         let explosion = (this.size * i + cellSize)
         image(animation1, this.x -explosion, this.y, this.size, this.size); //bombs left
@@ -109,15 +114,16 @@ class Bomb {
         if (this.x < rows * cellSize){  
           grid[gridLocationY][gridRightExplosion] = "explosion";
         }
-        if (this.y > 0){                                      // WORK ON FIXING CRASH ERROR IF BOMB EXPLOSION ABOVE ARRAY
+        if (this.y > 0){
           grid[gridUpExplosion + i][gridLocationX] = "explosion";
         }
         if (this.y < 9){
           grid[gridDownExplosion][gridLocationX] = "explosion";
         }
-      } 
-    }
-  }
+      }
+    } 
+  } //comment out if uncommenting if statement above
+
   display2(){
 
     if (keyCode === ENTER){
@@ -162,6 +168,8 @@ function draw() {
   displayGrid(grid, rows, cols);
   playerOne = new Bomb(playerOneX * cellSize, playerOneY * cellSize, rangeUp1);
   playerOne.display();
+  
+
   
   playerTwo = new Bomb(playerTwoX * cellSize, playerTwoY * cellSize, rangeUp2);
   playerTwo.display2();
@@ -252,7 +260,7 @@ function displayGrid(grid, rows, cols) {
         fill(255);
       }
       else{
-        grid[y][x] = "open space";  
+        grid[y][x] = "open space"; //breakable object  
         // image(breakable, x * cellSize, y * cellSize, cellSize, cellSize)
         fill("gray")
       }
