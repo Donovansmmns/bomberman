@@ -4,6 +4,8 @@
 
 
 //Settings for grid, player coordinates.
+let title;
+let state = "mainMenu";
 let grid;
 let rows = 9;
 let cols = 9;
@@ -41,6 +43,7 @@ let animation = [animation1, animation2, animation3, animation4, animation5, ani
 
 //Preloads images for aesthetic, only bomb works.
 function preload(){
+  title = loadImage("assets/title.png")
   wall = loadImage("assets/wall.png");
   breakable = loadImage("assets/breakable_wall.png")
   bomb = loadImage("assets/bomb.jpg")
@@ -68,11 +71,21 @@ function setup() {
   else {
     createCanvas(windowWidth, windowWidth);
   }
-
-  grid = createEmptyGrid(cols, rows);
-  grid[playerOneY][playerOneX] = "player one";
-  grid[playerTwoY][playerTwoX] = "player two";
-  cellSize = width / cols;
+  if (state === "mainMenu"){
+    mainMenu();
+  }
+  else if (state === "playerSelect"){
+    //CREATE FUNCTION
+  }
+  else if (state === "levelSelect"){
+    //CREATE FUNCTION
+  }
+  else{
+    grid = createEmptyGrid(cols, rows);
+    grid[playerOneY][playerOneX] = "player one";
+    grid[playerTwoY][playerTwoX] = "player two";
+    cellSize = width / cols;
+  }
 }
 
 class Bomb {
@@ -165,9 +178,12 @@ class Bomb {
 //Draws grid, players, bombs
 function draw() {
   background(220);
-  displayGrid(grid, rows, cols);
-  playerOne = new Bomb(playerOneX * cellSize, playerOneY * cellSize, rangeUp1);
-  playerOne.display();
+  mainMenu();
+  if (state === "Game"){
+    displayGrid(grid, rows, cols);
+    playerOne = new Bomb(playerOneX * cellSize, playerOneY * cellSize, rangeUp1);
+    playerOne.display();
+  }
   
 
   
@@ -273,5 +289,10 @@ function displayGrid(grid, rows, cols) {
   }
 }
 
-
-
+function mainMenu(){
+  image(title, width/2 - 300, 50, 600, 250)
+  rect(width/2 - 125, 300, 200, 75)
+  textSize(30)
+  textFont("Comic Sans Ms")
+  text("Single Player", width/2 - 115, 345)
+}
