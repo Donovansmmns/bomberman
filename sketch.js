@@ -20,6 +20,8 @@ let playerOneY = 0;
 let playerTwoX = 8;
 let playerTwoY = 8;
 
+let bombPlaced = false;
+
 let wall;
 let breakable;
 let bomb;
@@ -73,21 +75,11 @@ function setup() {
   else {
     createCanvas(windowWidth, windowWidth);
   }
-  // if (state === "mainMenu"){
-  //   mainMenu();
-  // }
-  // else if (state === "playerSelect"){
-  //   //CREATE FUNCTION
-  // }
-  // else if (state === "levelSelect"){
-  //   //CREATE FUNCTION
-  // }
-  // else{
     grid = createEmptyGrid(cols, rows);
     grid[playerOneY][playerOneX] = "player one";
     grid[playerTwoY][playerTwoX] = "player two";
     cellSize = width / cols;
-  // }
+  
 }
 
 class Bomb {
@@ -97,17 +89,14 @@ class Bomb {
     this.y = y;
     this.size = cellSize;
     this.range = cellSize * rangeUp;
-    this.timer = millis();
   }
   display(){
     if (key === " "){
       image(bomb, this.x, this.y, this.size, this.size);
-  //     if (millis() > this.timer + 1000){
-  //       this.explode();
-  //     }  
-  //   }
-  // }
-  // explode(){
+    
+    }
+  }
+  explode(){
       for (let i = 0; i <= rangeUp1; i++){
         let explosion = (this.size * i + cellSize)
         image(animation1, this.x -explosion, this.y, this.size, this.size); //bombs left
@@ -137,7 +126,6 @@ class Bomb {
         }
       }
     } 
-  } //comment out if uncommenting if statement above
 
   display2(){
 
@@ -179,6 +167,7 @@ class Bomb {
 
 //Draws grid, players, bombs
 function draw() {
+  let timer = millis();
   background(menuBackground);
   if (state === "mainMenu"){
     mainMenu();
@@ -187,9 +176,17 @@ function draw() {
     displayGrid(grid, rows, cols);
     playerOne = new Bomb(playerOneX * cellSize, playerOneY * cellSize, rangeUp1);
     playerOne.display();
+    if (key === " "){
+      bombPlaced = true;
+      if (bombPlaced === true){
+        if (millis() > timer + 1000) {        //FIX BOMBPLACED VARIABLE --IF TRUE IT STAYS TRUE, MAKE THE TIMER WORK!
+          bombPlaced = false;
+          timer = millis();
+          playerOne.explode();
+        }
+      }
+    } 
   }
-  
-
   
   playerTwo = new Bomb(playerTwoX * cellSize, playerTwoY * cellSize, rangeUp2);
   playerTwo.display2();
