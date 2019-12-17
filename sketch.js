@@ -26,8 +26,8 @@ let wall;
 let breakable;
 let bomb;
 
-
-
+let checker;
+let arrayCheck = [];
 let rangeUp = 0;
 let rangeUp1 = 0;
 let rangeUp2 = 0;
@@ -81,7 +81,8 @@ function setup() {
     grid[playerOneY][playerOneX] = "player one";
     grid[playerTwoY][playerTwoX] = "player two";
     cellSize = width / cols;
-  
+    checker = emptyGridCheck(cols, rows);
+    
 }
 
 class Bomb {
@@ -190,7 +191,6 @@ function draw() {
     //   }
     // } 
   }
-  gridCheck();
   
   playerTwo = new Bomb(playerTwoX * cellSize, playerTwoY * cellSize, rangeUp2);
   playerTwo.display2();
@@ -284,6 +284,14 @@ function displayGrid(grid, rows, cols) {
         grid[y][x] = "open space";
         fill(255);
       }
+      else if (grid[y][x] === "explosion"){
+        arrayCheck[y][x] = 1
+        grid[y][x] = "open space";
+      }
+      else if (arrayCheck[y][x] === 1){
+        grid[y][x] = "open space";
+        fill(255);
+      }
       else{
         grid[y][x] = "breakable object"; //breakable object  
         // image(breakable, x * cellSize, y * cellSize, cellSize, cellSize)
@@ -298,9 +306,8 @@ function displayGrid(grid, rows, cols) {
   }
 }
 
-function gridCheck(){     //NEEDS TO BE CHANGED COMPLETELY TO MAKE NEW 2D ARRAY
-  let arrayCheck = [];
-  let cleared = false;
+function emptyGridCheck(){     //NEEDS TO BE CHANGED COMPLETELY TO MAKE NEW 2D ARRAY
+  
   for (let x = 0; x < cols; x++) {
     arrayCheck.push([]);
     for (let y = 0; y < rows; y++) {
@@ -309,6 +316,7 @@ function gridCheck(){     //NEEDS TO BE CHANGED COMPLETELY TO MAKE NEW 2D ARRAY
   }
   return arrayCheck;
 }
+
 
 function mainMenu(){
   // image(title, width/2 - 300, 50, 600, 250)
