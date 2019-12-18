@@ -77,12 +77,12 @@ function setup() {
   else {
     createCanvas(windowWidth, windowWidth);
   }
-    grid = createEmptyGrid(cols, rows);
-    grid[playerOneY][playerOneX] = "player one";
-    grid[playerTwoY][playerTwoX] = "player two";
-    cellSize = width / cols;
-    checker = emptyGridCheck(cols, rows);
-    
+
+  grid = createEmptyGrid(cols, rows);
+  grid[playerOneY][playerOneX] = "player one";
+  grid[playerTwoY][playerTwoX] = "player two";
+  cellSize = width / cols;
+  checker = emptyGridCheck(cols, rows);
 }
 
 class Bomb {
@@ -180,16 +180,7 @@ function draw() {
     displayGrid(grid, rows, cols);
     playerOne = new Bomb(playerOneX * cellSize, playerOneY * cellSize, rangeUp1);
     playerOne.display();
-    // if (key === " "){
-    //   bombPlaced = true;
-    //   if (bombPlaced === true){
-    //     if (millis() > timer + 1000) {        //FIX BOMBPLACED VARIABLE --IF TRUE IT STAYS TRUE, MAKE THE TIMER WORK!
-    //       timer = millis();
-    //       playerOne.explode();
-    //       bombPlaced = false;
-    //     }
-    //   }
-    // } 
+
   }
   
   playerTwo = new Bomb(playerTwoX * cellSize, playerTwoY * cellSize, rangeUp2);
@@ -214,16 +205,16 @@ function keyTyped() {
 
   // move player one, checks if direction has obstacle ahead.
   if (state === "Game"){
-    if (key === "w" && playerOneY > 0 && grid[playerOneY-1][playerOneX] !== "unbreakable wall" && grid[playerOneY-1][playerOneX] !== "breakable object" ) { 
+    if (key === "w" && playerOneY > 0 && grid[playerOneY-1][playerOneX] !== "unbreakable wall" && grid[playerOneY-1][playerOneX] !== "breakable wall" ) { 
       playerOneY -= 1;
     }
-    if (key === "s" && playerOneY < rows - 1 && grid[playerOneY+1][playerOneX] !== "unbreakable wall" && grid[playerOneY+1][playerOneX] !== "breakable object") {
+    if (key === "s" && playerOneY < rows - 1 && grid[playerOneY+1][playerOneX] !== "unbreakable wall" && grid[playerOneY+1][playerOneX] !== "breakable wall") {
       playerOneY += 1;
     }
-    if (key === "d" && playerOneX < cols - 1 && grid[playerOneY][playerOneX+1] !== "unbreakable wall" && grid[playerOneY][playerOneX+1] !== "breakable object") {
+    if (key === "d" && playerOneX < cols - 1 && grid[playerOneY][playerOneX+1] !== "unbreakable wall" && grid[playerOneY][playerOneX+1] !== "breakable wall") {
       playerOneX += 1;
     }
-    if (key === "a" && playerOneX > 0 && grid[playerOneY][playerOneX-1] !== "unbreakable wall" && grid[playerOneY][playerOneX-1] !== "breakable object") {
+    if (key === "a" && playerOneX > 0 && grid[playerOneY][playerOneX-1] !== "unbreakable wall" && grid[playerOneY][playerOneX-1] !== "breakable wall") {
       playerOneX -= 1;
     }
     // put player back into grid.
@@ -238,16 +229,16 @@ function keyPressed(){
 
   // move player two, checks if direction has obstacle ahead.
   if (state === "Game"){
-    if (keyCode === UP_ARROW && playerTwoY > 0 && grid[playerTwoY-1][playerTwoX] !== "unbreakable wall" && grid[playerTwoY-1][playerTwoX] !== "breakable object") { 
+    if (keyCode === UP_ARROW && playerTwoY > 0 && grid[playerTwoY-1][playerTwoX] !== "unbreakable wall" && grid[playerTwoY-1][playerTwoX] !== "breakable wall") { 
       playerTwoY -= 1;
     }
-    if (keyCode === DOWN_ARROW && playerTwoY < rows - 1 && grid[playerTwoY+1][playerTwoX] !== "unbreakable wall" && grid[playerTwoY+1][playerTwoX] !== "breakable object") {
+    if (keyCode === DOWN_ARROW && playerTwoY < rows - 1 && grid[playerTwoY+1][playerTwoX] !== "unbreakable wall" && grid[playerTwoY+1][playerTwoX] !== "breakable wall") {
       playerTwoY += 1;
     }
-    if (keyCode === RIGHT_ARROW && playerTwoX < cols - 1 && grid[playerTwoY][playerTwoX+1] !== "unbreakable wall" && grid[playerTwoY][playerTwoX+1] !== "breakable object") {
+    if (keyCode === RIGHT_ARROW && playerTwoX < cols - 1 && grid[playerTwoY][playerTwoX+1] !== "unbreakable wall" && grid[playerTwoY][playerTwoX+1] !== "breakable wall") {
       playerTwoX += 1;
     }
-    if (keyCode === LEFT_ARROW && playerTwoX > 0 && grid[playerTwoY][playerTwoX-1] !== "unbreakable wall" && grid[playerTwoY][playerTwoX-1] !== "breakable object") {
+    if (keyCode === LEFT_ARROW && playerTwoX > 0 && grid[playerTwoY][playerTwoX-1] !== "unbreakable wall" && grid[playerTwoY][playerTwoX-1] !== "breakable wall") {
       playerTwoX -= 1;
     }
   
@@ -284,17 +275,17 @@ function displayGrid(grid, rows, cols) {
         grid[y][x] = "open space";
         fill(255);
       }
-      else if (grid[y][x] === "explosion"){
-        arrayCheck[y][x] = 1
-        grid[y][x] = "open space";
-      }
       else if (arrayCheck[y][x] === 1){
         grid[y][x] = "open space";
         fill(255);
       }
+      else if (grid[y][x] === "explosion"){
+        arrayCheck[y][x] = 1
+        grid[y][x] = "open space";
+      }
       else{
-        grid[y][x] = "breakable object"; //breakable object  
-        // image(breakable, x * cellSize, y * cellSize, cellSize, cellSize)
+        grid[y][x] = "breakable wall"; //breakable wall  
+        // image(breakable, x * cellSize, y * cellSize, cellSize, cellSize) 
         fill("gray")
       }
       rect(x*cellSize, y*cellSize, cellSize, cellSize);
@@ -306,7 +297,7 @@ function displayGrid(grid, rows, cols) {
   }
 }
 
-function emptyGridCheck(){     //NEEDS TO BE CHANGED COMPLETELY TO MAKE NEW 2D ARRAY
+function emptyGridCheck(){
   
   for (let x = 0; x < cols; x++) {
     arrayCheck.push([]);
