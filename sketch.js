@@ -29,8 +29,8 @@ let bomb;
 let checker;
 let arrayCheck = [];
 let rangeUp = 0;
-let rangeUp1 = 0;
-let rangeUp2 = 0;
+let rangeUp1 = 3;
+let rangeUp2 = 2;
 
 //NICE TO HAVE
 let spreadsheet;
@@ -124,7 +124,13 @@ class Bomb {
         if (this.y > 0){
           grid[gridUpExplosion + i][gridLocationX] = "explosion";
         }
-        if (this.y < 9){
+        if (rangeUp1 !== 0){
+          if (this.y <= cols * cellSize - (cellSize  + cellSize * rangeUp1)){
+            
+            grid[gridDownExplosion][gridLocationX] = "explosion";
+          }
+        }
+        else if (this.y < cols * cellSize - cellSize){
           grid[gridDownExplosion][gridLocationX] = "explosion";
         }
       }
@@ -160,7 +166,7 @@ class Bomb {
         if (this.y > 0){
           grid[gridUpExplosion + i][gridLocationX] = "explosion";
         }
-        if (this.y < 9){
+        if (this.y < cols * cellSize - (cellSize + cellSize * rangeUp2)){
           grid[gridDownExplosion][gridLocationX] = "explosion";
         }
       } 
