@@ -113,6 +113,7 @@ class Bomb {
         let gridRightExplosion = floor((this.x / cellSize + 1) + i)
         let gridUpExplosion = floor((this.y / cellSize - 1) - i)
         let gridDownExplosion = floor((this.y / cellSize + 1) + i)
+        
 
         grid[gridLocationY][gridLocationX] = "bomb";
         if (this.x > 0){
@@ -125,8 +126,7 @@ class Bomb {
           grid[gridUpExplosion + i][gridLocationX] = "explosion";
         }
         if (rangeUp1 !== 0){
-          if (this.y <= cols * cellSize - (cellSize  + cellSize * rangeUp1)){
-            
+          if (this.y + (rangeUp1 * cellSize) < cols * cellSize - cellSize){ // fix please
             grid[gridDownExplosion][gridLocationX] = "explosion";
           }
         }
@@ -156,6 +156,7 @@ class Bomb {
         let gridUpExplosion = floor((this.y / cellSize - 1) - i)
         let gridDownExplosion = floor((this.y / cellSize + 1) + i)
         
+        
         grid[gridLocationY][gridLocationX] = "bomb";
         if (this.x > 0){
           grid[gridLocationY][gridLeftExplosion] = "explosion";
@@ -166,7 +167,8 @@ class Bomb {
         if (this.y > 0){
           grid[gridUpExplosion + i][gridLocationX] = "explosion";
         }
-        if (this.y < cols * cellSize - (cellSize + cellSize * rangeUp2)){
+        if (this.y < cols * cellSize - cellSize){
+          gridDownExplosion -= 
           grid[gridDownExplosion][gridLocationX] = "explosion";
         }
       } 
