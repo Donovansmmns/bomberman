@@ -4,7 +4,6 @@
 My goal is to make the game Bomberman. I plan to have proper interactions with hitboxes, collision, and character upgrades that can be found when breaking obstacles - as close as possible to the real game.
 ## Need To Have List
 - Start menu
-- Level select
 - Choice of player amount
 - Player controls
 - Simple AI

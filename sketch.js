@@ -20,7 +20,7 @@ let playerOneY = 0;
 let playerTwoX = 8;
 let playerTwoY = 8;
 
-let bombPlaced = false;
+let winner;
 
 let wall;
 let breakable;
@@ -29,8 +29,8 @@ let bomb;
 let checker;
 let arrayCheck = [];
 let rangeUp = 0;
-let rangeUp1 = 3;
-let rangeUp2 = 2;
+let rangeUp1 = 0;
+let rangeUp2 = 0;
 
 //NICE TO HAVE
 let spreadsheet;
@@ -48,23 +48,24 @@ let animation = [animation1, animation2, animation3, animation4, animation5, ani
 
 //Preloads images for aesthetic, only bomb works.
 function preload(){
-  title = loadImage("assets/title.png")
-  menuBackground = loadImage("assets/backtitle.jpg")
+  title = loadImage("assets/title.png");
+  menuBackground = loadImage("assets/backtitle.jpg");
   wall = loadImage("assets/wall.png");
-  breakable = loadImage("assets/breakable_wall.png")
-  bomb = loadImage("assets/bomb.jpg")
-  spreadsheet = loadImage("assets/spreadsheet.png")
+  breakable = loadImage("assets/breakable_wall.png");
+  bomb = loadImage("assets/bomb.jpg");
+  spreadsheet = loadImage("assets/spreadsheet.png");
+  winner = loadImage("assets/gameover.jpg");
   //NICE TO HAVE
-  animation1 = loadImage("assets/animation1.png")
-  animation2 = loadImage("assets/animation2.png")
-  animation3 = loadImage("assets/animation3.png")
-  animation4 = loadImage("assets/animation4.png")
-  animation5 = loadImage("assets/animation5.png")
-  animation6 = loadImage("assets/animation6.png")
-  animation7 = loadImage("assets/animation7.png")
-  animation8 = loadImage("assets/animation8.png")
-  animation9 = loadImage("assets/animation9.png")
-  animation10 = loadImage("assets/animation10.png")
+  animation1 = loadImage("assets/animation1.png");
+  animation2 = loadImage("assets/animation2.png");
+  animation3 = loadImage("assets/animation3.png");
+  animation4 = loadImage("assets/animation4.png");
+  animation5 = loadImage("assets/animation5.png");
+  animation6 = loadImage("assets/animation6.png");
+  animation7 = loadImage("assets/animation7.png");
+  animation8 = loadImage("assets/animation8.png");
+  animation9 = loadImage("assets/animation9.png");
+  animation10 = loadImage("assets/animation10.png");
 
 
 }
@@ -151,10 +152,10 @@ class Bomb {
         
         let gridLocationX = floor(this.x / cellSize);
         let gridLocationY = floor(this.y / cellSize);
-        let gridLeftExplosion = floor((this.x / cellSize - 1) - i)
-        let gridRightExplosion = floor((this.x / cellSize + 1) + i)
-        let gridUpExplosion = floor((this.y / cellSize - 1) - i)
-        let gridDownExplosion = floor((this.y / cellSize + 1) + i)
+        let gridLeftExplosion = floor((this.x / cellSize - 1) - i);
+        let gridRightExplosion = floor((this.x / cellSize + 1) + i);
+        let gridUpExplosion = floor((this.y / cellSize - 1) - i);
+        let gridDownExplosion = floor((this.y / cellSize + 1) + i);
         
         
         grid[gridLocationY][gridLocationX] = "bomb";
@@ -179,8 +180,8 @@ class Bomb {
 
 //Draws grid, players, bombs
 function draw() {
-  let timer;
   background(menuBackground);
+  gameOver();
   if (state === "mainMenu"){
     mainMenu();
   }
@@ -188,12 +189,21 @@ function draw() {
     displayGrid(grid, rows, cols);
     playerOne = new Bomb(playerOneX * cellSize, playerOneY * cellSize, rangeUp1);
     playerOne.display();
-
+    playerTwo = new Bomb(playerTwoX * cellSize, playerTwoY * cellSize, rangeUp2);
+    playerTwo.display2();
   }
-  
-  playerTwo = new Bomb(playerTwoX * cellSize, playerTwoY * cellSize, rangeUp2);
-  playerTwo.display2();
-
+  else if (state === "P1W"){
+    background(winner);
+    fill("white");
+    textSize(40);
+    text("Player One Wins! Take that, Player Two!", 25, height/2 - 150);
+  }
+  else if (state === "P2W"){
+    background(winner);
+    fill("white");
+    textSize(40);
+    text("Player Two Wins! Get good, Player One!", 25, height/2 - 150);
+  }
 }
 
 //Adjusts grid to window size.
@@ -277,7 +287,7 @@ function displayGrid(grid, rows, cols) {
       }
       else if (y % 2 !== 0 && x % 2 !== 0){
         grid[y][x] = "unbreakable wall";
-        fill(0)
+        fill(0);
       }
       else if (y === 0 && x === 0 || y === 0 && x === 1 || y === 1 && x === 0 || y === 8 && x === 8 || y === 8 && x === 7 || y === 7 && x === 8){
         grid[y][x] = "open space";
@@ -288,13 +298,13 @@ function displayGrid(grid, rows, cols) {
         fill(255);
       }
       else if (grid[y][x] === "explosion"){
-        arrayCheck[y][x] = 1
+        arrayCheck[y][x] = 1;
         grid[y][x] = "open space";
       }
       else{
         grid[y][x] = "breakable wall"; //breakable wall  
         // image(breakable, x * cellSize, y * cellSize, cellSize, cellSize) 
-        fill("gray")
+        fill("gray");
       }
       rect(x*cellSize, y*cellSize, cellSize, cellSize);
       if (y === playerTwoY && x === playerTwoX){
@@ -319,13 +329,41 @@ function emptyGridCheck(){
 
 function mainMenu(){
   // image(title, width/2 - 300, 50, 600, 250)
-  fill("yellow")
-  rect(width/2 - 125, 300, 250, 50, 20)
-  fill(0)
-  textSize(30)
-  textFont("Comic Sans Ms")
-  text("Single Player", width/2 - 90, 335)
+  fill("yellow");
+  rect(width/2 - 125, 300, 250, 50, 20);
+  fill(0);
+  textSize(30);
+  textFont("Comic Sans Ms");
+  text("Single Player", width/2 - 90, 335);
   if (mouseIsPressed && mouseX >width/2-125 && mouseX < width/2+125 && mouseY > 300 && mouseY < 375){
-    state = "Game"
+    state = "Game";
+  }
+  fill("yellow");
+  rect(width/2 - 125, 400, 250, 50, 20);
+  fill(0);
+  textSize(30);
+  textFont("Comic Sans Ms");
+  text("Multiplayer", width/2 - 80, 435);
+  if (mouseIsPressed && mouseX >width/2-125 && mouseX < width/2+125 && mouseY > 400 && mouseY < 450){
+    state = "Game";
+  }
+  fill("yellow");
+  rect(width/2 - 125, 500, 250, 50, 20);
+  fill(0);
+  textSize(30);
+  textFont("Comic Sans Ms");
+  text("Controls", width/2 - 60, 535);
+  if (mouseIsPressed && mouseX >width/2-125 && mouseX < width/2+125 && mouseY > 400 && mouseY < 525){
+    state = "Options";
+  }
+
+}
+
+function gameOver(){
+  if (grid[playerTwoY][playerTwoX] === "explosion"){
+    state = "P1W";
+  }
+  if (grid[playerOneY][playerOneX] === "explosion"){
+    state = "P2W";
   }
 }
