@@ -49,7 +49,7 @@ let animation = [animation1, animation2, animation3, animation4, animation5, ani
 //Preloads images for aesthetic, only bomb works.
 function preload(){
   title = loadImage("assets/title.png");
-  menuBackground = loadImage("assets/backtitle.jpg");
+  menuBackground = loadImage("assets/titlebackground.png");
   wall = loadImage("assets/wall.png");
   breakable = loadImage("assets/breakable_wall.png");
   bomb = loadImage("assets/bomb.jpg");
@@ -185,20 +185,34 @@ function draw() {
   if (state === "mainMenu"){
     mainMenu();
   }
-  else if (state === "Game"){
+  else if (state === "Solo"){
+    displayGrid(grid, rows, cols);
+    playerOne = new Bomb(playerOneX * cellSize, playerOneY * cellSize, rangeUp1);
+    playerOne.display();
+  }
+
+  else if (state === "Multi"){
     displayGrid(grid, rows, cols);
     playerOne = new Bomb(playerOneX * cellSize, playerOneY * cellSize, rangeUp1);
     playerOne.display();
     playerTwo = new Bomb(playerTwoX * cellSize, playerTwoY * cellSize, rangeUp2);
     playerTwo.display2();
   }
-  else if (state === "P1W"){
+
+  else if (state === "Options"){
+    fill("yellow");
+    textSize(30);
+    text("Player One:\nW/A/S/D, Spacebar Places Bomb", 175, height/2)
+    text("Player Two:\nArrow Keys, Shift Places Bomb", 175, height/2 + 100)
+  }
+  else if (state === "PvP1"){
     background(winner);
     fill("white");
     textSize(40);
     text("Player One Wins! Take that, Player Two!", 25, height/2 - 150);
   }
-  else if (state === "P2W"){
+
+  else if (state === "PvP2"){
     background(winner);
     fill("white");
     textSize(40);
@@ -222,7 +236,7 @@ function keyTyped() {
   grid[playerOneY][playerOneX] = 0;
 
   // move player one, checks if direction has obstacle ahead.
-  if (state === "Game"){
+  if (state === "Solo" || state === "Multi"){
     if (key === "w" && playerOneY > 0 && grid[playerOneY-1][playerOneX] !== "unbreakable wall" && grid[playerOneY-1][playerOneX] !== "breakable wall" ) { 
       playerOneY -= 1;
     }
@@ -246,7 +260,7 @@ function keyPressed(){
   grid[playerTwoY][playerTwoX] = 0;
 
   // move player two, checks if direction has obstacle ahead.
-  if (state === "Game"){
+  if (state === "Multi"){
     if (keyCode === UP_ARROW && playerTwoY > 0 && grid[playerTwoY-1][playerTwoX] !== "unbreakable wall" && grid[playerTwoY-1][playerTwoX] !== "breakable wall") { 
       playerTwoY -= 1;
     }
@@ -307,7 +321,7 @@ function displayGrid(grid, rows, cols) {
         fill("gray");
       }
       rect(x*cellSize, y*cellSize, cellSize, cellSize);
-      if (y === playerTwoY && x === playerTwoX){
+      if (y === playerTwoY && x === playerTwoX && state === "Multi"){
         fill("red");
       }
       rect(x*cellSize, y*cellSize, cellSize, cellSize);
@@ -330,22 +344,22 @@ function emptyGridCheck(){
 function mainMenu(){
   // image(title, width/2 - 300, 50, 600, 250)
   fill("yellow");
-  rect(width/2 - 125, 300, 250, 50, 20);
+  rect(width/2 - 125, 350, 250, 50, 20);
   fill(0);
   textSize(30);
   textFont("Comic Sans Ms");
-  text("Single Player", width/2 - 90, 335);
-  if (mouseIsPressed && mouseX >width/2-125 && mouseX < width/2+125 && mouseY > 300 && mouseY < 375){
-    state = "Game";
+  text("Single Player", width/2 - 90, 385);
+  if (mouseIsPressed && mouseX >width/2-125 && mouseX < width/2+125 && mouseY > 350 && mouseY < 400){
+    state = "Solo";
   }
   fill("yellow");
-  rect(width/2 - 125, 400, 250, 50, 20);
+  rect(width/2 - 125, 425, 250, 50, 20);
   fill(0);
   textSize(30);
   textFont("Comic Sans Ms");
-  text("Multiplayer", width/2 - 80, 435);
-  if (mouseIsPressed && mouseX >width/2-125 && mouseX < width/2+125 && mouseY > 400 && mouseY < 450){
-    state = "Game";
+  text("Multiplayer", width/2 - 80, 460);
+  if (mouseIsPressed && mouseX >width/2-125 && mouseX < width/2+125 && mouseY > 425 && mouseY < 475){
+    state = "Multi";
   }
   fill("yellow");
   rect(width/2 - 125, 500, 250, 50, 20);
@@ -353,7 +367,7 @@ function mainMenu(){
   textSize(30);
   textFont("Comic Sans Ms");
   text("Controls", width/2 - 60, 535);
-  if (mouseIsPressed && mouseX >width/2-125 && mouseX < width/2+125 && mouseY > 400 && mouseY < 525){
+  if (mouseIsPressed && mouseX >width/2-125 && mouseX < width/2+125 && mouseY > 500 && mouseY < 550){
     state = "Options";
   }
 
@@ -361,9 +375,9 @@ function mainMenu(){
 
 function gameOver(){
   if (grid[playerTwoY][playerTwoX] === "explosion"){
-    state = "P1W";
+    state = "PvP1";
   }
   if (grid[playerOneY][playerOneX] === "explosion"){
-    state = "P2W";
+    state = "PvP2";
   }
 }
