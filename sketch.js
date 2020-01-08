@@ -181,7 +181,7 @@ class Bomb {
 //Draws grid, players, bombs
 function draw() {
   background(menuBackground);
-  gameOver();
+  gameOverPvP();
   if (state === "mainMenu"){
     mainMenu();
   }
@@ -189,6 +189,8 @@ function draw() {
     displayGrid(grid, rows, cols);
     playerOne = new Bomb(playerOneX * cellSize, playerOneY * cellSize, rangeUp1);
     playerOne.display();
+    playerTwoX = 0;
+    playerTwoY = 0;
   }
 
   else if (state === "Multi"){
@@ -202,20 +204,23 @@ function draw() {
   else if (state === "Options"){
     fill("yellow");
     textSize(30);
-    text("Player One:\nW/A/S/D, Spacebar Places Bomb", 175, height/2)
-    text("Player Two:\nArrow Keys, Shift Places Bomb", 175, height/2 + 100)
+    textFont("Algerian");
+    text("Player One:\nWASD, Spacebar Places Bomb", 175, height/2);
+    text("Player Two:\nArrow Keys, Shift Places Bomb", 175, height/2 + 100);
   }
   else if (state === "PvP1"){
     background(winner);
     fill("white");
-    textSize(40);
+    textSize(35);
+    textFont("Algerian");
     text("Player One Wins! Take that, Player Two!", 25, height/2 - 150);
   }
 
   else if (state === "PvP2"){
     background(winner);
     fill("white");
-    textSize(40);
+    textSize(35);
+    textFont("Algerian");
     text("Player Two Wins! Get good, Player One!", 25, height/2 - 150);
   }
 }
@@ -347,8 +352,8 @@ function mainMenu(){
   rect(width/2 - 125, 350, 250, 50, 20);
   fill(0);
   textSize(30);
-  textFont("Comic Sans Ms");
-  text("Single Player", width/2 - 90, 385);
+  textFont("Algerian");
+  text("Single Player", width/2 - 110, 385);
   if (mouseIsPressed && mouseX >width/2-125 && mouseX < width/2+125 && mouseY > 350 && mouseY < 400){
     state = "Solo";
   }
@@ -356,8 +361,8 @@ function mainMenu(){
   rect(width/2 - 125, 425, 250, 50, 20);
   fill(0);
   textSize(30);
-  textFont("Comic Sans Ms");
-  text("Multiplayer", width/2 - 80, 460);
+  textFont("Algerian");
+  text("Multiplayer", width/2 - 95, 460);
   if (mouseIsPressed && mouseX >width/2-125 && mouseX < width/2+125 && mouseY > 425 && mouseY < 475){
     state = "Multi";
   }
@@ -365,16 +370,16 @@ function mainMenu(){
   rect(width/2 - 125, 500, 250, 50, 20);
   fill(0);
   textSize(30);
-  textFont("Comic Sans Ms");
-  text("Controls", width/2 - 60, 535);
+  textFont("Algerian");
+  text("Controls", width/2 - 70, 535);
   if (mouseIsPressed && mouseX >width/2-125 && mouseX < width/2+125 && mouseY > 500 && mouseY < 550){
     state = "Options";
   }
 
 }
 
-function gameOver(){
-  if (grid[playerTwoY][playerTwoX] === "explosion"){
+function gameOverPvP(){
+  if (grid[playerTwoY][playerTwoX] === "explosion" && state === "Multi"){
     state = "PvP1";
   }
   if (grid[playerOneY][playerOneX] === "explosion"){

@@ -3,16 +3,16 @@
 ## Description
 My goal is to make the game Bomberman. I plan to have proper interactions with hitboxes, collision, and character upgrades that can be found when breaking obstacles - as close as possible to the real game.
 ## Need To Have List
-- Start menu
-- Choice of player amount
-- Player controls
+- Start menu                       //DONE
+- Choice of player amount          //DONE
+- Player controls                  //DONE
 - Simple AI
 - Upgrades within game
-- Unit collision
-- Hitbox interaction
-- Environment affected by bombs
-- Life count
-- Win/Lose situation
+- Unit collision                   //DONE
+- Hitbox interaction               //DONE
+- Environment affected by bombs    //DONE
+- Life count                       //DONE
+- Win/Lose situation               //DONE
 ## Nice To Have List
 - Advanced AI
 - Difficulty setting on AI
