@@ -29,8 +29,8 @@ let bomb;
 let checker;
 let arrayCheck = [];
 let rangeUp = 0;
-let rangeUp1 = 0;
-let rangeUp2 = 0;
+let rangeUp1 = 3;
+let rangeUp2 = 1;
 
 //NICE TO HAVE
 let spreadsheet;
@@ -97,10 +97,7 @@ class Bomb {
   display(){
     if (key === " "){
       image(bomb, this.x, this.y, this.size, this.size);
-    
-    // }
-  // }
-  // explode(){
+
       for (let i = 0; i <= rangeUp1; i++){
         let explosion = (this.size * i + cellSize)
         image(animation1, this.x -explosion, this.y, this.size, this.size); //bombs left
@@ -136,7 +133,7 @@ class Bomb {
         }
       }
     }
-  } //COMMENT OUT IF MAKING EXPLODE FUNCTION ACTIVE 
+  }
 
   display2(){
 
