@@ -29,8 +29,8 @@ let bomb;
 let checker;
 let arrayCheck = [];
 let rangeUp = 0;
-let rangeUp1 = 3;
-let rangeUp2 = 1;
+let rangeUp1 = 0;
+let rangeUp2 = 0;
 
 //NICE TO HAVE
 let spreadsheet;
@@ -177,6 +177,7 @@ class Bomb {
 
 //Draws grid, players, bombs
 function draw() {
+  let timer = 1000
   background(menuBackground);
   gameOverPvP();
   if (state === "mainMenu"){
@@ -186,8 +187,12 @@ function draw() {
     displayGrid(grid, rows, cols);
     playerOne = new Bomb(playerOneX * cellSize, playerOneY * cellSize, rangeUp1);
     playerOne.display();
-    playerTwoX = 0;
-    playerTwoY = 0;
+    playerTwo = new Bomb(playerTwoX * cellSize, playerTwoY * cellSize, rangeUp2);
+    playerTwo.display2();
+    if (millis() > timer){
+      computer();
+      timer += timer;
+    }
   }
 
   else if (state === "Multi"){
@@ -302,7 +307,7 @@ function displayGrid(grid, rows, cols) {
         fill("blue");
       }
       else if (y % 2 !== 0 && x % 2 !== 0){
-        grid[y][x] = "unbreakable wall";
+        grid[y][x] = "open space";
         fill(0);
       }
       else if (y === 0 && x === 0 || y === 0 && x === 1 || y === 1 && x === 0 || y === 8 && x === 8 || y === 8 && x === 7 || y === 7 && x === 8){
@@ -318,12 +323,12 @@ function displayGrid(grid, rows, cols) {
         grid[y][x] = "open space";
       }
       else{
-        grid[y][x] = "breakable wall"; //breakable wall  
+        grid[y][x] = "open space"; //breakable wall  
         // image(breakable, x * cellSize, y * cellSize, cellSize, cellSize) 
         fill("gray");
       }
       rect(x*cellSize, y*cellSize, cellSize, cellSize);
-      if (y === playerTwoY && x === playerTwoX && state === "Multi"){
+      if (y === playerTwoY && x === playerTwoX){
         fill("red");
       }
       rect(x*cellSize, y*cellSize, cellSize, cellSize);
@@ -381,5 +386,43 @@ function gameOverPvP(){
   }
   if (grid[playerOneY][playerOneX] === "explosion"){
     state = "PvP2";
+  }
+}
+
+function computer(){
+  let move = random(100);
+  if (move <= 25  && playerTwoY > 0){
+    if (grid[playerTwoY][playerTwoX] === "open space" || grid[playerTwoY][playerTwoX] === "explosion"){
+      playerTwoY -= 1;
+    }
+    else if (grid[playerTwoY-1][playerTwoX] === "breakable wall"){
+      keyCode === ENTER;
+    } 
+  }
+  else if (move > 25 && move <= 50 && playerTwoY < 7){
+    if (grid[playerTwoY][playerTwoX] === "open space" || grid[playerTwoY][playerTwoX] === "explosion"){
+      playerTwoY += 1;
+    }
+    else if (grid[playerTwoY+1][playerTwoX] === "breakable wall"){
+      keyCode === 13;
+    } 
+  }
+  else if (move > 50 && move <= 75 && playerTwoX > 0){
+    if (grid[playerTwoY][playerTwoX] === "open space" || grid[playerTwoY][playerTwoX] === "explosion"){
+      playerTwoX -= 1;
+    }
+    else if (grid[playerTwoY][playerTwoX-1] === "breakable wall"){
+      keyCode === 13;
+    } 
+  }
+  else{
+    if (grid[playerTwoY] < 7){
+      if (grid[playerTwoY][playerTwoX] === "open space" || grid[playerTwoY][playerTwoX] === "explosion" && playerTwoX < 8){
+        playerTwoX += 1;
+      }
+      else if (grid[playerTwoY][playerTwoX+1] === "breakable wall"){
+        keyCode === 13;
+      } 
+    }
   }
 }
