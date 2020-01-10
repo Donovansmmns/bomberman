@@ -14,6 +14,7 @@ let cellSize;
 
 let playerOne;
 let playerTwo;
+let bot;
 
 let playerOneX = 0;
 let playerOneY = 0;
@@ -25,6 +26,10 @@ let winner;
 let wall;
 let breakable;
 let bomb;
+
+let wait = 200;
+let timer = 0;
+let timeToMove = true;
 
 let checker;
 let arrayCheck = [];
@@ -175,11 +180,10 @@ class Bomb {
 }
 
 
-//Draws grid, players, bombs
+//Checks state of game - menu, singleplayer, multiplayer, controls, win-situation. Draws level, players, and bombs.
 function draw() {
-  let timer = 1000
   background(menuBackground);
-  gameOverPvP();
+  gameOver();
   if (state === "mainMenu"){
     mainMenu();
   }
@@ -187,11 +191,13 @@ function draw() {
     displayGrid(grid, rows, cols);
     playerOne = new Bomb(playerOneX * cellSize, playerOneY * cellSize, rangeUp1);
     playerOne.display();
-    playerTwo = new Bomb(playerTwoX * cellSize, playerTwoY * cellSize, rangeUp2);
-    playerTwo.display2();
-    if (millis() > timer){
-      computer();
-      timer += timer;
+    bot = new Bomb(playerTwoX * cellSize, playerTwoY * cellSize, rangeUp2);
+    bot.display2();
+    if (timeToMove){
+      if (millis() > timer + wait){
+        computer();
+        timer = millis();
+      }
     }
   }
 
@@ -210,7 +216,7 @@ function draw() {
     text("Player One:\nWASD, Spacebar Places Bomb", 175, height/2);
     text("Player Two:\nArrow Keys, Shift Places Bomb", 175, height/2 + 100);
   }
-  else if (state === "PvP1"){
+  else if (state === "P1W"){
     background(winner);
     fill("white");
     textSize(35);
@@ -218,7 +224,7 @@ function draw() {
     text("Player One Wins! Take that, Player Two!", 25, height/2 - 150);
   }
 
-  else if (state === "PvP2"){
+  else if (state === "P2W"){
     background(winner);
     fill("white");
     textSize(35);
@@ -237,7 +243,7 @@ function windowResized() {
   }
 }
 
-//Function to move player one through the grid, stops if at a wall or border.
+//Function to move player one through the grid, stops if at a wall or border. Controls for player one.
 function keyTyped() {
   // remove player from current spot.
   grid[playerOneY][playerOneX] = 0;
@@ -261,7 +267,7 @@ function keyTyped() {
   }
 }
 
-//Function to move player two through the grid with arrow keys, stops if at a wall or border.
+//Function to move player two through the grid, stops if at a wall or border. Controls for player two.
 function keyPressed(){
   // remove player from current spot.
   grid[playerTwoY][playerTwoX] = 0;
@@ -306,27 +312,33 @@ function displayGrid(grid, rows, cols) {
       if (y === playerOneY && x === playerOneX) {
         fill("blue");
       }
-      else if (y % 2 !== 0 && x % 2 !== 0){
-        grid[y][x] = "open space";
+      //Sets all even positioned spots as unbreakable objects, not including the border.
+      else if (y % 2 !== 0 && x % 2 !== 0){ 
+        grid[y][x] = "unbreakable wall";     //unbreakable wall
         fill(0);
       }
+      //starting zone for both players
       else if (y === 0 && x === 0 || y === 0 && x === 1 || y === 1 && x === 0 || y === 8 && x === 8 || y === 8 && x === 7 || y === 7 && x === 8){
-        grid[y][x] = "open space";
+        grid[y][x] = "open space"; 
         fill(255);
       }
+      //Checks to see if it has been affected by a bomb in the past - sets position to become an open space
       else if (arrayCheck[y][x] === 1){
-        grid[y][x] = "open space";
+        grid[y][x] = "open space"; 
         fill(255);
       }
+      //Set breakable objects hit by bombs to be open spaces
       else if (grid[y][x] === "explosion"){
         arrayCheck[y][x] = 1;
         grid[y][x] = "open space";
       }
+      //Fills all remaining spots as breakable walls that can be affected by bombs
       else{
-        grid[y][x] = "open space"; //breakable wall  
+        grid[y][x] = "breakable wall"; //breakable wall  
         // image(breakable, x * cellSize, y * cellSize, cellSize, cellSize) 
         fill("gray");
       }
+      //Displays player two in the set coordinates
       rect(x*cellSize, y*cellSize, cellSize, cellSize);
       if (y === playerTwoY && x === playerTwoX){
         fill("red");
@@ -351,56 +363,56 @@ function emptyGridCheck(){
 function mainMenu(){
   // image(title, width/2 - 300, 50, 600, 250)
   fill("yellow");
-  rect(width/2 - 125, 350, 250, 50, 20);
+  rect(width/2 - 125, height/2 - 45, 250, 50, 20);
   fill(0);
   textSize(30);
   textFont("Algerian");
-  text("Single Player", width/2 - 110, 385);
+  text("Single Player", width/2 - 110, height/2 - 10);
   if (mouseIsPressed && mouseX >width/2-125 && mouseX < width/2+125 && mouseY > 350 && mouseY < 400){
     state = "Solo";
   }
   fill("yellow");
-  rect(width/2 - 125, 425, 250, 50, 20);
+  rect(width/2 - 125, height/2 + 30, 250, 50, 20);
   fill(0);
   textSize(30);
   textFont("Algerian");
-  text("Multiplayer", width/2 - 95, 460);
+  text("Multiplayer", width/2 - 95, height/2 + 65);
   if (mouseIsPressed && mouseX >width/2-125 && mouseX < width/2+125 && mouseY > 425 && mouseY < 475){
     state = "Multi";
   }
   fill("yellow");
-  rect(width/2 - 125, 500, 250, 50, 20);
+  rect(width/2 - 125, height/2 + 105, 250, 50, 20);
   fill(0);
   textSize(30);
   textFont("Algerian");
-  text("Controls", width/2 - 70, 535);
+  text("Controls", width/2 - 70, height/2 + 140);
   if (mouseIsPressed && mouseX >width/2-125 && mouseX < width/2+125 && mouseY > 500 && mouseY < 550){
     state = "Options";
   }
 
 }
 
-function gameOverPvP(){
-  if (grid[playerTwoY][playerTwoX] === "explosion" && state === "Multi"){
-    state = "PvP1";
+function gameOver(){
+  if (grid[playerTwoY][playerTwoX] === "explosion"){
+    state = "P1W";
   }
   if (grid[playerOneY][playerOneX] === "explosion"){
-    state = "PvP2";
+    state = "P2W";
   }
 }
 
 function computer(){
   let move = random(100);
   if (move <= 25  && playerTwoY > 0){
-    if (grid[playerTwoY][playerTwoX] === "open space" || grid[playerTwoY][playerTwoX] === "explosion"){
+    if (grid[playerTwoY-1][playerTwoX] === "open space" || grid[playerTwoY-1][playerTwoX] === "explosion"){ //Up
       playerTwoY -= 1;
     }
     else if (grid[playerTwoY-1][playerTwoX] === "breakable wall"){
       keyCode === ENTER;
     } 
   }
-  else if (move > 25 && move <= 50 && playerTwoY < 7){
-    if (grid[playerTwoY][playerTwoX] === "open space" || grid[playerTwoY][playerTwoX] === "explosion"){
+  else if (move > 25 && move <= 50 && playerTwoY < 8){
+    if (grid[playerTwoY+1][playerTwoX] === "open space" || grid[playerTwoY+1][playerTwoX] === "explosion"){ //Down
       playerTwoY += 1;
     }
     else if (grid[playerTwoY+1][playerTwoX] === "breakable wall"){
@@ -408,21 +420,22 @@ function computer(){
     } 
   }
   else if (move > 50 && move <= 75 && playerTwoX > 0){
-    if (grid[playerTwoY][playerTwoX] === "open space" || grid[playerTwoY][playerTwoX] === "explosion"){
+    if (grid[playerTwoY][playerTwoX-1] === "open space" || grid[playerTwoY][playerTwoX-1] === "explosion"){ //Left
       playerTwoX -= 1;
     }
     else if (grid[playerTwoY][playerTwoX-1] === "breakable wall"){
       keyCode === 13;
     } 
   }
-  else{
-    if (grid[playerTwoY] < 7){
-      if (grid[playerTwoY][playerTwoX] === "open space" || grid[playerTwoY][playerTwoX] === "explosion" && playerTwoX < 8){
-        playerTwoX += 1;
-      }
-      else if (grid[playerTwoY][playerTwoX+1] === "breakable wall"){
-        keyCode === 13;
-      } 
+  else if (move > 75 && playerTwoX < 8){
+    if (grid[playerTwoY][playerTwoX+1] === "open space" || grid[playerTwoY][playerTwoX+1] === "explosion"){ //Right
+      playerTwoX += 1;
     }
+    else if (grid[playerTwoY][playerTwoX+1] === "breakable wall"){
+      keyCode === ENTER;
+    } 
+  }
+  else {
+    move = random(100);
   }
 }
