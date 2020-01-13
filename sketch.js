@@ -187,6 +187,7 @@ function draw() {
   if (state === "mainMenu"){
     mainMenu();
   }
+  //Creates player one and the AI, using a timer to set the AI move speed.
   else if (state === "Solo"){
     displayGrid(grid, rows, cols);
     playerOne = new Bomb(playerOneX * cellSize, playerOneY * cellSize, rangeUp1);
@@ -200,7 +201,7 @@ function draw() {
       }
     }
   }
-
+  //Creates both controllable players.
   else if (state === "Multi"){
     displayGrid(grid, rows, cols);
     playerOne = new Bomb(playerOneX * cellSize, playerOneY * cellSize, rangeUp1);
@@ -208,7 +209,7 @@ function draw() {
     playerTwo = new Bomb(playerTwoX * cellSize, playerTwoY * cellSize, rangeUp2);
     playerTwo.display2();
   }
-
+  //Displays controls on how to play.
   else if (state === "Options"){
     fill("yellow");
     textSize(30);
@@ -216,6 +217,7 @@ function draw() {
     text("Player One:\nWASD, Spacebar Places Bomb", 175, height/2);
     text("Player Two:\nArrow Keys, Shift Places Bomb", 175, height/2 + 100);
   }
+  //Victory message for player 1.
   else if (state === "P1W"){
     background(winner);
     fill("white");
@@ -223,7 +225,7 @@ function draw() {
     textFont("Algerian");
     text("Player One Wins! Take that, Player Two!", 25, height/2 - 150);
   }
-
+  //Victory message for player 2 or AI.
   else if (state === "P2W"){
     background(winner);
     fill("white");
@@ -408,7 +410,7 @@ function computer(){
       playerTwoY -= 1;
     }
     else if (grid[playerTwoY-1][playerTwoX] === "breakable wall"){
-      keyCode === ENTER;
+      // keyCode === ENTER;
     } 
   }
   else if (move > 25 && move <= 50 && playerTwoY < 8){
@@ -416,7 +418,7 @@ function computer(){
       playerTwoY += 1;
     }
     else if (grid[playerTwoY+1][playerTwoX] === "breakable wall"){
-      keyCode === 13;
+      // keyCode === 13;
     } 
   }
   else if (move > 50 && move <= 75 && playerTwoX > 0){
@@ -424,7 +426,7 @@ function computer(){
       playerTwoX -= 1;
     }
     else if (grid[playerTwoY][playerTwoX-1] === "breakable wall"){
-      keyCode === 13;
+      // keyCode === 13;
     } 
   }
   else if (move > 75 && playerTwoX < 8){
@@ -432,7 +434,7 @@ function computer(){
       playerTwoX += 1;
     }
     else if (grid[playerTwoY][playerTwoX+1] === "breakable wall"){
-      keyCode === ENTER;
+      // keyCode === ENTER;
     } 
   }
   else {

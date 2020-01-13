@@ -6,8 +6,7 @@ My goal is to make the game Bomberman. I plan to have proper interactions with h
 - Start menu                       //DONE
 - Choice of player amount          //DONE
 - Player controls                  //DONE
-- Simple AI
-- Upgrades within game
+- Simple AI                        //DONE
 - Unit collision                   //DONE
 - Hitbox interaction               //DONE
 - Environment affected by bombs    //DONE
@@ -16,6 +15,7 @@ My goal is to make the game Bomberman. I plan to have proper interactions with h
 ## Nice To Have List
 - Advanced AI
 - Difficulty setting on AI
+- Upgrades within game
 - Ability for AI to collect upgrades
 - Images to visually appeal player(s)
 - Animations for explosions, movement, character death
