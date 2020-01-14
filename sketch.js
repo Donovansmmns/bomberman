@@ -27,7 +27,7 @@ let wall;
 let breakable;
 let bomb;
 
-let wait = 200;
+let wait = 500;
 let timer = 0;
 let timeToMove = true;
 
@@ -405,12 +405,17 @@ function gameOver(){
 
 function computer(){
   let move = random(100);
+  console.log(move)
+  console.log(keyCode);
   if (move <= 25  && playerTwoY > 0){
     if (grid[playerTwoY-1][playerTwoX] === "open space" || grid[playerTwoY-1][playerTwoX] === "explosion"){ //Up
       playerTwoY -= 1;
     }
     else if (grid[playerTwoY-1][playerTwoX] === "breakable wall"){
-      // keyCode === ENTER;
+      keyCode = ENTER;
+      if (keyCode === ENTER){
+        keyCode = UP_ARROW;
+      }
     } 
   }
   else if (move > 25 && move <= 50 && playerTwoY < 8){
@@ -418,7 +423,10 @@ function computer(){
       playerTwoY += 1;
     }
     else if (grid[playerTwoY+1][playerTwoX] === "breakable wall"){
-      // keyCode === 13;
+      keyCode = ENTER;
+      if (grid[playerOneY+1][playerTwoX] === "explosion"){
+        keyCode = DOWN_ARROW;
+      }
     } 
   }
   else if (move > 50 && move <= 75 && playerTwoX > 0){
@@ -426,7 +434,10 @@ function computer(){
       playerTwoX -= 1;
     }
     else if (grid[playerTwoY][playerTwoX-1] === "breakable wall"){
-      // keyCode === 13;
+      keyCode = ENTER;
+      if (grid[playerOneY][playerTwoX-1] === "explosion"){
+        keyCode = LEFT_ARROW;
+      }
     } 
   }
   else if (move > 75 && playerTwoX < 8){
@@ -434,7 +445,10 @@ function computer(){
       playerTwoX += 1;
     }
     else if (grid[playerTwoY][playerTwoX+1] === "breakable wall"){
-      // keyCode === ENTER;
+      keyCode = ENTER;
+      if (grid[playerOneY][playerTwoX+1] === "explosion"){
+        keyCode = RIGHT_ARROW;
+      }
     } 
   }
   else {
