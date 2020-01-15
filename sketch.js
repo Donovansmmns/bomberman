@@ -27,12 +27,13 @@ let wall;
 let breakable;
 let bomb;
 
-let wait = 400;
 let timer = 0;
+let wait = 400;
 let timeToMove = true;
 
 let checker;
 let arrayCheck = [];
+
 let rangeUp = 0;
 let rangeUp1 = 0;
 let rangeUp2 = 0;
