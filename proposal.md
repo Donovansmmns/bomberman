@@ -6,7 +6,7 @@ My goal is to make the game Bomberman. I plan to have proper interactions with h
 - Start menu                       //DONE
 - Choice of player amount          //DONE
 - Player controls                  //DONE
-- Simple AI                        //DONE
+- Simple AI                        //MOSTLY DONE
 - Unit collision                   //DONE
 - Hitbox interaction               //DONE
 - Environment affected by bombs    //DONE

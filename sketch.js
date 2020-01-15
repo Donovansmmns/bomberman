@@ -27,7 +27,7 @@ let wall;
 let breakable;
 let bomb;
 
-let wait = 500;
+let wait = 400;
 let timer = 0;
 let timeToMove = true;
 
