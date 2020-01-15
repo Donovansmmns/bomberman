@@ -129,7 +129,7 @@ class Bomb {
           grid[gridUpExplosion + i][gridLocationX] = "explosion";
         }
         if (rangeUp1 !== 0){
-          if (this.y + (rangeUp1 * cellSize) < cols * cellSize - cellSize){ // fix please
+          if (this.y + (rangeUp1 * cellSize) < cols * cellSize - cellSize){ // Needs fixing
             grid[gridDownExplosion][gridLocationX] = "explosion";
           }
         }
@@ -405,8 +405,8 @@ function gameOver(){
 
 function computer(){
   let move = random(100);
-  console.log(move)
-  console.log(keyCode);
+  // console.log(move)
+  // console.log(keyCode);
   if (move <= 25  && playerTwoY > 0){
     if (grid[playerTwoY-1][playerTwoX] === "open space" || grid[playerTwoY-1][playerTwoX] === "explosion"){ //Up
       playerTwoY -= 1;
