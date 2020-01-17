@@ -35,7 +35,7 @@ let checker;
 let arrayCheck = [];
 
 let rangeUp = 0;
-let rangeUp1 = 0;
+let rangeUp1 = 1;
 let rangeUp2 = 0;
 
 //NICE TO HAVE
@@ -101,16 +101,19 @@ class Bomb {
     this.range = cellSize * rangeUp;
   }
   display(){
+    //Creates bomb image and explosion surrounding area when key is pressed.
     if (key === " "){
       image(bomb, this.x, this.y, this.size, this.size);
 
+      //Creates explosion image based on player's range.
       for (let i = 0; i <= rangeUp1; i++){
         let explosion = (this.size * i + cellSize)
         image(animation1, this.x -explosion, this.y, this.size, this.size); //bombs left
         image(animation1,this.x + explosion, this.y, this.size, this.size); //bombs right
         image(animation1,this.x, this.y - explosion, this.size, this.size); //bombs up
         image(animation1,this.x, this.y + explosion, this.size, this.size); //bombs down
-        
+
+        //Rounds decimal of explosion locations.
         let gridLocationX = floor(this.x / cellSize);
         let gridLocationY = floor(this.y / cellSize);
         let gridLeftExplosion = floor((this.x / cellSize - 1) - i)
@@ -118,31 +121,47 @@ class Bomb {
         let gridUpExplosion = floor((this.y / cellSize - 1) - i)
         let gridDownExplosion = floor((this.y / cellSize + 1) + i)
         
-
+        //Sets position of grid to become an explosion or bomb.
         grid[gridLocationY][gridLocationX] = "bomb";
         if (this.x > 0){
-          grid[gridLocationY][gridLeftExplosion] = "explosion";
-        }
-        if (this.x < rows * cellSize){  
-          grid[gridLocationY][gridRightExplosion] = "explosion";
-        }
-        if (this.y > 0){
-          grid[gridUpExplosion + i][gridLocationX] = "explosion";
-        }
-        if (rangeUp1 !== 0){
-          if (this.y + (rangeUp1 * cellSize) < cols * cellSize - cellSize){ // Needs fixing
-            grid[gridDownExplosion][gridLocationX] = "explosion";
+          if (grid[gridLocationY][gridLocationX-1] !== "unbreakable wall"){ //Array left.
+            grid[gridLocationY][gridLeftExplosion] = "explosion";
           }
         }
+        if (this.x < rows * cellSize){
+          if (grid[gridLocationY][gridLocationX+1] !== "unbreakable wall"){ //Array right.
+            grid[gridLocationY][gridRightExplosion] = "explosion";
+          }
+        }
+        if (this.y > rangeUp1){
+          if (grid[gridLocationY-1][gridLocationX] !== "unbreakable wall"){ //Array up.
+            grid[gridUpExplosion][gridLocationX] = "explosion";
+          }
+        }
+        if (rangeUp1 > 0){
+          if (this.y + (rangeUp1 * cellSize) > cols * cellSize){ // Needs fixing
+            gridDownExplosion--;
+            if (grid[gridLocationY+1][gridLocationX] !== "unbreakable wall"){ //Array down and range power-up collected.
+              grid[gridDownExplosion][gridLocationX] = "explosion";
+              }
+          }
+          else{
+            if (grid[gridLocationY+1][gridLocationX] !== "unbreakable wall" && gridLocationY+rangeUp1 < cols-2){  //Fix to make rangeUp work
+              grid[gridDownExplosion][gridLocationX] = "explosion";
+              }
+            }
+          }
+        
         else if (this.y < cols * cellSize - cellSize){
-          grid[gridDownExplosion][gridLocationX] = "explosion";
+          if (grid[gridLocationY+1][gridLocationX] !== "unbreakable wall"){ //Array down.
+            grid[gridDownExplosion][gridLocationX] = "explosion";
+          }
         }
       }
     }
   }
-
   display2(){
-
+    //Places a bomb for player two / AI when key is pressed - same function as display, for secondary player.
     if (keyCode === ENTER){
       image(bomb, this.x, this.y, this.size, this.size);
       
@@ -163,17 +182,29 @@ class Bomb {
         
         grid[gridLocationY][gridLocationX] = "bomb";
         if (this.x > 0){
-          grid[gridLocationY][gridLeftExplosion] = "explosion";
+          if (grid[gridLocationY][gridLocationX-1] !== "unbreakable wall"){ //Array left.)
+            grid[gridLocationY][gridLeftExplosion] = "explosion";
+          }
         }
-        if (this.x < rows * cellSize){  
-          grid[gridLocationY][gridRightExplosion] = "explosion";
+        if (this.x < rows * cellSize){ 
+          if (grid[gridLocationY][gridLocationX+1] !== "unbreakable wall"){ //Array right.
+            grid[gridLocationY][gridRightExplosion] = "explosion";
+          }
         }
         if (this.y > 0){
-          grid[gridUpExplosion + i][gridLocationX] = "explosion";
+          if (grid[gridLocationY-1][gridLocationX] !== "unbreakable wall"){ //Array up.
+            grid[gridUpExplosion + i][gridLocationX] = "explosion";
+          }
         }
-        if (this.y < cols * cellSize - cellSize){
-          gridDownExplosion -= 
-          grid[gridDownExplosion][gridLocationX] = "explosion";
+        if (this.y < 0){
+          if (grid[gridLocationY+1][gridLocationX-1] !== "unbreakable wall"){ //Array down with power-up collected.
+            grid[gridDownExplosion][gridLocationX] = "explosion";
+          }
+        }
+        else if (this.y < cols * cellSize - cellSize){
+          if (grid[gridLocationY+1][gridLocationX] !== "unbreakable wall"){ //Array down.
+            grid[gridDownExplosion][gridLocationX] = "explosion";
+          }
         }
       } 
     }
