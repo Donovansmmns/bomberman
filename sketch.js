@@ -4,7 +4,6 @@
 
 
 //Settings for grid, player coordinates.
-let title;
 let menuBackground;
 let state = "mainMenu";
 let grid;
@@ -23,22 +22,27 @@ let playerTwoY = 8;
 
 let winner;
 
+//Map images.
 let wall;
 let breakable;
 let bomb;
+let ground;
 
+//Computer timer
 let timer = 0;
 let wait = 400;
 let timeToMove = true;
 
+//Checks array for environment interaction.
 let checker;
 let arrayCheck = [];
 
+//Nice to have - Range power-ups (not working).
 let rangeUp = 0;
-let rangeUp1 = 1;
+let rangeUp1 = 0;
 let rangeUp2 = 0;
 
-//NICE TO HAVE
+//Nice to have images for animation, not implemented.
 let spreadsheet;
 let animation1;
 let animation2;
@@ -52,16 +56,15 @@ let animation9;
 let animation10;
 let animation = [animation1, animation2, animation3, animation4, animation5, animation6, animation7, animation8, animation9, animation10];
 
-//Preloads images for aesthetic, only bomb works.
+//Preloads images for aesthetic.
 function preload(){
-  title = loadImage("assets/title.png");
   menuBackground = loadImage("assets/titlebackground.png");
   wall = loadImage("assets/wall.png");
   breakable = loadImage("assets/breakable_wall.png");
   bomb = loadImage("assets/bomb.jpg");
-  spreadsheet = loadImage("assets/spreadsheet.png");
+  ground = loadImage("assets/floor.png");
   winner = loadImage("assets/gameover.jpg");
-  //NICE TO HAVE
+  //Nice to have for animation on bombs.
   animation1 = loadImage("assets/animation1.png");
   animation2 = loadImage("assets/animation2.png");
   animation3 = loadImage("assets/animation3.png");
@@ -84,7 +87,7 @@ function setup() {
   else {
     createCanvas(windowWidth, windowWidth);
   }
-
+  //Creates grid with set size, places player within.
   grid = createEmptyGrid(cols, rows);
   grid[playerOneY][playerOneX] = "player one";
   grid[playerTwoY][playerTwoX] = "player two";
@@ -94,12 +97,12 @@ function setup() {
 
 class Bomb {
   constructor(x, y, rangeUp){
-    
     this.x = x;
     this.y = y;
     this.size = cellSize;
     this.range = cellSize * rangeUp;
   }
+
   display(){
     //Creates bomb image and explosion surrounding area when key is pressed.
     if (key === " "){
@@ -123,35 +126,45 @@ class Bomb {
         
         //Sets position of grid to become an explosion or bomb.
         grid[gridLocationY][gridLocationX] = "bomb";
+
+        //Turns grid position left into an explosion in array.
         if (this.x > 0){
           if (grid[gridLocationY][gridLocationX-1] !== "unbreakable wall"){ //Array left.
             grid[gridLocationY][gridLeftExplosion] = "explosion";
           }
         }
+
+        //Turns grid position right into an explosion in array.
         if (this.x < rows * cellSize){
           if (grid[gridLocationY][gridLocationX+1] !== "unbreakable wall"){ //Array right.
             grid[gridLocationY][gridRightExplosion] = "explosion";
           }
         }
+
+        //Turns grid position above into an explosion in array.
         if (this.y > rangeUp1){
           if (grid[gridLocationY-1][gridLocationX] !== "unbreakable wall"){ //Array up.
             grid[gridUpExplosion][gridLocationX] = "explosion";
           }
         }
+
+        //Turns grid position down into an explosion in array, goes farther if the player has a rangeUp bonus.
         if (rangeUp1 > 0){
           if (this.y + (rangeUp1 * cellSize) > cols * cellSize){ // Needs fixing
             gridDownExplosion--;
-            if (grid[gridLocationY+1][gridLocationX] !== "unbreakable wall"){ //Array down and range power-up collected.
+            if (grid[gridLocationY+1][gridLocationX] !== "unbreakable wall"){ //Array down with power-up collected.
               grid[gridDownExplosion][gridLocationX] = "explosion";
-              }
+            }
           }
+
+          //Needs fixing for explosion to affect all map properly.
           else{
-            if (grid[gridLocationY+1][gridLocationX] !== "unbreakable wall" && gridLocationY+rangeUp1 < cols-2){  //Fix to make rangeUp work
+            if (grid[gridLocationY+1][gridLocationX] !== "unbreakable wall" && gridLocationY+rangeUp1 < cols-2){
               grid[gridDownExplosion][gridLocationX] = "explosion";
               }
             }
           }
-        
+        //Turns grid position down into an explosion in array.
         else if (this.y < cols * cellSize - cellSize){
           if (grid[gridLocationY+1][gridLocationX] !== "unbreakable wall"){ //Array down.
             grid[gridDownExplosion][gridLocationX] = "explosion";
@@ -160,8 +173,9 @@ class Bomb {
       }
     }
   }
+
+  //Places a bomb for player two / AI when key is pressed - same function as display, for secondary player.
   display2(){
-    //Places a bomb for player two / AI when key is pressed - same function as display, for secondary player.
     if (keyCode === ENTER){
       image(bomb, this.x, this.y, this.size, this.size);
       
@@ -186,6 +200,7 @@ class Bomb {
             grid[gridLocationY][gridLeftExplosion] = "explosion";
           }
         }
+
         if (this.x < rows * cellSize){ 
           if (grid[gridLocationY][gridLocationX+1] !== "unbreakable wall"){ //Array right.
             grid[gridLocationY][gridRightExplosion] = "explosion";
@@ -196,11 +211,13 @@ class Bomb {
             grid[gridUpExplosion + i][gridLocationX] = "explosion";
           }
         }
+
         if (this.y < 0){
           if (grid[gridLocationY+1][gridLocationX-1] !== "unbreakable wall"){ //Array down with power-up collected.
             grid[gridDownExplosion][gridLocationX] = "explosion";
           }
         }
+
         else if (this.y < cols * cellSize - cellSize){
           if (grid[gridLocationY+1][gridLocationX] !== "unbreakable wall"){ //Array down.
             grid[gridDownExplosion][gridLocationX] = "explosion";
@@ -219,6 +236,7 @@ function draw() {
   if (state === "mainMenu"){
     mainMenu();
   }
+
   //Creates player one and the AI, using a timer to set the AI move speed.
   else if (state === "Solo"){
     displayGrid(grid, rows, cols);
@@ -233,6 +251,7 @@ function draw() {
       }
     }
   }
+
   //Creates both controllable players.
   else if (state === "Multi"){
     displayGrid(grid, rows, cols);
@@ -241,6 +260,7 @@ function draw() {
     playerTwo = new Bomb(playerTwoX * cellSize, playerTwoY * cellSize, rangeUp2);
     playerTwo.display2();
   }
+
   //Displays controls on how to play.
   else if (state === "Options"){
     fill("yellow");
@@ -249,6 +269,7 @@ function draw() {
     text("Player One:\nWASD, Spacebar Places Bomb", 175, height/2);
     text("Player Two:\nArrow Keys, Shift Places Bomb", 175, height/2 + 100);
   }
+
   //Victory message for player 1.
   else if (state === "P1W"){
     background(winner);
@@ -257,6 +278,7 @@ function draw() {
     textFont("Algerian");
     text("Player One Wins! Take that, Player Two!", 25, height/2 - 150);
   }
+
   //Victory message for player 2 or AI.
   else if (state === "P2W"){
     background(winner);
@@ -296,6 +318,7 @@ function keyTyped() {
     if (key === "a" && playerOneX > 0 && grid[playerOneY][playerOneX-1] !== "unbreakable wall" && grid[playerOneY][playerOneX-1] !== "breakable wall") {
       playerOneX -= 1;
     }
+
     // put player back into grid.
     grid[playerOneY][playerOneX] = "player one";
   }
@@ -345,45 +368,50 @@ function displayGrid(grid, rows, cols) {
     for (let x = 0; x < cols; x++) {
       if (y === playerOneY && x === playerOneX) {
         fill("blue");
+        rect(x*cellSize, y*cellSize, cellSize, cellSize);
       }
+
       //Sets all even positioned spots as unbreakable objects, not including the border.
       else if (y % 2 !== 0 && x % 2 !== 0){ 
-        grid[y][x] = "unbreakable wall";     //unbreakable wall
-        fill(0);
+        grid[y][x] = "unbreakable wall";
+        image(wall, x * cellSize, y * cellSize, cellSize, cellSize);
       }
-      //starting zone for both players
+
+      //Starting zone for both players.
       else if (y === 0 && x === 0 || y === 0 && x === 1 || y === 1 && x === 0 || y === 8 && x === 8 || y === 8 && x === 7 || y === 7 && x === 8){
-        grid[y][x] = "open space"; 
-        fill(255);
+        grid[y][x] = "open space";
+        image(ground, x * cellSize, y * cellSize, cellSize, cellSize); 
       }
-      //Checks to see if it has been affected by a bomb in the past - sets position to become an open space
+
+      //Checks to see if it has been affected by a bomb in the past - sets position to become an open space.
       else if (arrayCheck[y][x] === 1){
-        grid[y][x] = "open space"; 
-        fill(255);
+        grid[y][x] = "open space";
+        image(ground, x * cellSize, y * cellSize, cellSize, cellSize);  
       }
-      //Set breakable objects hit by bombs to be open spaces
+
+      //Set breakable objects hit by bombs to be open spaces.
       else if (grid[y][x] === "explosion"){
         arrayCheck[y][x] = 1;
         grid[y][x] = "open space";
       }
-      //Fills all remaining spots as breakable walls that can be affected by bombs
+
+      //Fills all remaining spots as breakable walls that can be affected by bombs.
       else{
-        grid[y][x] = "breakable wall"; //breakable wall  
-        // image(breakable, x * cellSize, y * cellSize, cellSize, cellSize) 
-        fill("gray");
+        grid[y][x] = "breakable wall";
+        image(breakable, x * cellSize, y * cellSize, cellSize, cellSize) 
       }
-      //Displays player two in the set coordinates
-      rect(x*cellSize, y*cellSize, cellSize, cellSize);
+
+      //Displays player two in the set coordinates.
       if (y === playerTwoY && x === playerTwoX){
         fill("red");
+        rect(x*cellSize, y*cellSize, cellSize, cellSize);
       }
-      rect(x*cellSize, y*cellSize, cellSize, cellSize);
     }
   }
 }
 
+//Creates empty grid that is used to check if blocks have exploded.
 function emptyGridCheck(){
-  
   for (let x = 0; x < cols; x++) {
     arrayCheck.push([]);
     for (let y = 0; y < rows; y++) {
@@ -393,9 +421,8 @@ function emptyGridCheck(){
   return arrayCheck;
 }
 
-
+//Places buttons on main menu to choose single player, multiplayer, or controls.
 function mainMenu(){
-  // image(title, width/2 - 300, 50, 600, 250)
   fill("yellow");
   rect(width/2 - 125, height/2 - 45, 250, 50, 20);
   fill(0);
@@ -405,6 +432,7 @@ function mainMenu(){
   if (mouseIsPressed && mouseX >width/2-125 && mouseX < width/2+125 && mouseY > 350 && mouseY < 400){
     state = "Solo";
   }
+
   fill("yellow");
   rect(width/2 - 125, height/2 + 30, 250, 50, 20);
   fill(0);
@@ -414,6 +442,7 @@ function mainMenu(){
   if (mouseIsPressed && mouseX >width/2-125 && mouseX < width/2+125 && mouseY > 425 && mouseY < 475){
     state = "Multi";
   }
+
   fill("yellow");
   rect(width/2 - 125, height/2 + 105, 250, 50, 20);
   fill(0);
@@ -423,9 +452,9 @@ function mainMenu(){
   if (mouseIsPressed && mouseX >width/2-125 && mouseX < width/2+125 && mouseY > 500 && mouseY < 550){
     state = "Options";
   }
-
 }
 
+//Called when there is a winner.
 function gameOver(){
   if (grid[playerTwoY][playerTwoX] === "explosion"){
     state = "P1W";
@@ -435,14 +464,14 @@ function gameOver(){
   }
 }
 
+//Controls for computer.
 function computer(){
   let move = random(100);
-  // console.log(move)
-  // console.log(keyCode);
   if (move <= 25  && playerTwoY > 0){
     if (grid[playerTwoY-1][playerTwoX] === "open space" || grid[playerTwoY-1][playerTwoX] === "explosion"){ //Up
       playerTwoY -= 1;
     }
+
     else if (grid[playerTwoY-1][playerTwoX] === "breakable wall"){
       keyCode = ENTER;
       if (keyCode === ENTER){
@@ -450,10 +479,12 @@ function computer(){
       }
     } 
   }
+
   else if (move > 25 && move <= 50 && playerTwoY < 8){
     if (grid[playerTwoY+1][playerTwoX] === "open space" || grid[playerTwoY+1][playerTwoX] === "explosion"){ //Down
       playerTwoY += 1;
     }
+
     else if (grid[playerTwoY+1][playerTwoX] === "breakable wall"){
       keyCode = ENTER;
       if (grid[playerOneY+1][playerTwoX] === "explosion"){
@@ -461,10 +492,12 @@ function computer(){
       }
     } 
   }
+
   else if (move > 50 && move <= 75 && playerTwoX > 0){
     if (grid[playerTwoY][playerTwoX-1] === "open space" || grid[playerTwoY][playerTwoX-1] === "explosion"){ //Left
       playerTwoX -= 1;
     }
+
     else if (grid[playerTwoY][playerTwoX-1] === "breakable wall"){
       keyCode = ENTER;
       if (grid[playerOneY][playerTwoX-1] === "explosion"){
@@ -472,10 +505,12 @@ function computer(){
       }
     } 
   }
+
   else if (move > 75 && playerTwoX < 8){
     if (grid[playerTwoY][playerTwoX+1] === "open space" || grid[playerTwoY][playerTwoX+1] === "explosion"){ //Right
       playerTwoX += 1;
     }
+
     else if (grid[playerTwoY][playerTwoX+1] === "breakable wall"){
       keyCode = ENTER;
       if (grid[playerOneY][playerTwoX+1] === "explosion"){
@@ -483,6 +518,7 @@ function computer(){
       }
     } 
   }
+
   else {
     move = random(100);
   }
