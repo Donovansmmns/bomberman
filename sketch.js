@@ -1,6 +1,6 @@
 //Major Project -- Bomberman
 //Donovan Simmons.
-//Jan 21, 2019
+//Jan 20, 2020
 
 
 //Settings for grid, player coordinates.
@@ -14,6 +14,7 @@ let cellSize;
 let playerOne;
 let playerTwo;
 let bot;
+let bombPlaced = false;
 
 let playerOneX = 0;
 let playerOneY = 0;
@@ -22,7 +23,9 @@ let playerTwoY = 8;
 
 let winner;
 
-//Map images.
+//Map & character images.
+let spriteOne;
+let spriteTwo;
 let wall;
 let breakable;
 let bomb;
@@ -30,7 +33,7 @@ let ground;
 
 //Computer timer
 let timer = 0;
-let wait = 400;
+let wait = 400; //<== Lower to increase difficulty.
 let timeToMove = true;
 
 //Checks array for environment interaction.
@@ -58,10 +61,12 @@ let animation = [animation1, animation2, animation3, animation4, animation5, ani
 
 //Preloads images for aesthetic.
 function preload(){
+  spriteOne = loadImage("assets/p1.png");
+  spriteTwo = loadImage("assets/p2.png");
   menuBackground = loadImage("assets/titlebackground.png");
   wall = loadImage("assets/wall.png");
   breakable = loadImage("assets/breakable_wall.png");
-  bomb = loadImage("assets/bomb.jpg");
+  bomb = loadImage("assets/bomb.png");
   ground = loadImage("assets/floor.png");
   winner = loadImage("assets/gameover.jpg");
   //Nice to have for animation on bombs.
@@ -107,70 +112,76 @@ class Bomb {
     //Creates bomb image and explosion surrounding area when key is pressed.
     if (key === " "){
       image(bomb, this.x, this.y, this.size, this.size);
+      bombPlaced = true;
 
       //Creates explosion image based on player's range.
-      for (let i = 0; i <= rangeUp1; i++){
-        let explosion = (this.size * i + cellSize)
-        image(animation1, this.x -explosion, this.y, this.size, this.size); //bombs left
-        image(animation1,this.x + explosion, this.y, this.size, this.size); //bombs right
-        image(animation1,this.x, this.y - explosion, this.size, this.size); //bombs up
-        image(animation1,this.x, this.y + explosion, this.size, this.size); //bombs down
+      if (bombPlaced === true){
+        for (let i = 0; i <= rangeUp1; i++){
+          let explosion = (this.size * i + cellSize)
+          image(animation1, this.x -explosion, this.y, this.size, this.size); //bombs left
+          image(animation1,this.x + explosion, this.y, this.size, this.size); //bombs right
+          image(animation1,this.x, this.y - explosion, this.size, this.size); //bombs up
+          image(animation1,this.x, this.y + explosion, this.size, this.size); //bombs down
 
-        //Rounds decimal of explosion locations.
-        let gridLocationX = floor(this.x / cellSize);
-        let gridLocationY = floor(this.y / cellSize);
-        let gridLeftExplosion = floor((this.x / cellSize - 1) - i)
-        let gridRightExplosion = floor((this.x / cellSize + 1) + i)
-        let gridUpExplosion = floor((this.y / cellSize - 1) - i)
-        let gridDownExplosion = floor((this.y / cellSize + 1) + i)
-        
-        //Sets position of grid to become an explosion or bomb.
-        grid[gridLocationY][gridLocationX] = "bomb";
+          //Rounds decimal of explosion locations.
+          let gridLocationX = floor(this.x / cellSize);
+          let gridLocationY = floor(this.y / cellSize);
+          let gridLeftExplosion = floor((this.x / cellSize - 1) - i)
+          let gridRightExplosion = floor((this.x / cellSize + 1) + i)
+          let gridUpExplosion = floor((this.y / cellSize - 1) - i)
+          let gridDownExplosion = floor((this.y / cellSize + 1) + i)
+          
+          //Sets position of grid to become an explosion or bomb.
+          grid[gridLocationY][gridLocationX] = "bomb";
 
-        //Turns grid position left into an explosion in array.
-        if (this.x > 0){
-          if (grid[gridLocationY][gridLocationX-1] !== "unbreakable wall"){ //Array left.
-            grid[gridLocationY][gridLeftExplosion] = "explosion";
-          }
-        }
-
-        //Turns grid position right into an explosion in array.
-        if (this.x < rows * cellSize){
-          if (grid[gridLocationY][gridLocationX+1] !== "unbreakable wall"){ //Array right.
-            grid[gridLocationY][gridRightExplosion] = "explosion";
-          }
-        }
-
-        //Turns grid position above into an explosion in array.
-        if (this.y > rangeUp1){
-          if (grid[gridLocationY-1][gridLocationX] !== "unbreakable wall"){ //Array up.
-            grid[gridUpExplosion][gridLocationX] = "explosion";
-          }
-        }
-
-        //Turns grid position down into an explosion in array, goes farther if the player has a rangeUp bonus.
-        if (rangeUp1 > 0){
-          if (this.y + (rangeUp1 * cellSize) > cols * cellSize){ // Needs fixing
-            gridDownExplosion--;
-            if (grid[gridLocationY+1][gridLocationX] !== "unbreakable wall"){ //Array down with power-up collected.
-              grid[gridDownExplosion][gridLocationX] = "explosion";
+          //Turns grid position left into an explosion in array.
+          if (this.x > 0){
+            if (grid[gridLocationY][gridLocationX-1] !== "unbreakable wall"){ //Array left.
+              grid[gridLocationY][gridLeftExplosion] = "explosion";
             }
           }
 
-          //Needs fixing for explosion to affect all map properly.
-          else{
-            if (grid[gridLocationY+1][gridLocationX] !== "unbreakable wall" && gridLocationY+rangeUp1 < cols-2){
-              grid[gridDownExplosion][gridLocationX] = "explosion";
+          //Turns grid position right into an explosion in array.
+          if (this.x < rows * cellSize){
+            if (grid[gridLocationY][gridLocationX+1] !== "unbreakable wall"){ //Array right.
+              grid[gridLocationY][gridRightExplosion] = "explosion";
+            }
+          }
+
+          //Turns grid position above into an explosion in array.
+          if (this.y > rangeUp1){
+            if (grid[gridLocationY-1][gridLocationX] !== "unbreakable wall"){ //Array up.
+              grid[gridUpExplosion][gridLocationX] = "explosion";
+            }
+          }
+
+          //Turns grid position down into an explosion in array, goes farther if the player has a rangeUp bonus.
+          if (rangeUp1 > 0){
+            if (this.y + (rangeUp1 * cellSize) > cols * cellSize){ // Needs fixing
+              gridDownExplosion--;
+              if (grid[gridLocationY+1][gridLocationX] !== "unbreakable wall"){ //Array down with power-up collected.
+                grid[gridDownExplosion][gridLocationX] = "explosion";
               }
             }
-          }
-        //Turns grid position down into an explosion in array.
-        else if (this.y < cols * cellSize - cellSize){
-          if (grid[gridLocationY+1][gridLocationX] !== "unbreakable wall"){ //Array down.
-            grid[gridDownExplosion][gridLocationX] = "explosion";
+
+            //Needs fixing for explosion to affect all map properly.
+            else{
+              if (grid[gridLocationY+1][gridLocationX] !== "unbreakable wall" && gridLocationY+rangeUp1 < cols-2){
+                grid[gridDownExplosion][gridLocationX] = "explosion";
+                }
+              }
+            }
+          //Turns grid position down into an explosion in array.
+          else if (this.y < cols * cellSize - cellSize){
+            if (grid[gridLocationY+1][gridLocationX] !== "unbreakable wall"){ //Array down.
+              grid[gridDownExplosion][gridLocationX] = "explosion";
+            }
           }
         }
       }
+    }
+    else{
+      bombPlaced = false;
     }
   }
 
@@ -178,52 +189,58 @@ class Bomb {
   display2(){
     if (keyCode === ENTER){
       image(bomb, this.x, this.y, this.size, this.size);
-      
-      for (let i = 0; i <= rangeUp2; i++){
-        let explosion = (this.size * i + cellSize)
-        image(animation1, this.x -explosion, this.y, this.size, this.size); //bombs left
-        image(animation1,this.x + explosion, this.y, this.size, this.size); //bombs right
-        image(animation1,this.x, this.y - explosion, this.size, this.size); //bombs up
-        image(animation1,this.x, this.y + explosion, this.size, this.size); //bombs down
-        
-        let gridLocationX = floor(this.x / cellSize);
-        let gridLocationY = floor(this.y / cellSize);
-        let gridLeftExplosion = floor((this.x / cellSize - 1) - i);
-        let gridRightExplosion = floor((this.x / cellSize + 1) + i);
-        let gridUpExplosion = floor((this.y / cellSize - 1) - i);
-        let gridDownExplosion = floor((this.y / cellSize + 1) + i);
-        
-        
-        grid[gridLocationY][gridLocationX] = "bomb";
-        if (this.x > 0){
-          if (grid[gridLocationY][gridLocationX-1] !== "unbreakable wall"){ //Array left.)
-            grid[gridLocationY][gridLeftExplosion] = "explosion";
+      bombPlaced = true;
+      if (bombPlaced === true){  
+        for (let i = 0; i <= rangeUp2; i++){
+          let explosion = (this.size * i + cellSize)
+          image(animation1, this.x -explosion, this.y, this.size, this.size); //bombs left
+          image(animation1,this.x + explosion, this.y, this.size, this.size); //bombs right
+          image(animation1,this.x, this.y - explosion, this.size, this.size); //bombs up
+          image(animation1,this.x, this.y + explosion, this.size, this.size); //bombs down
+          
+          let gridLocationX = floor(this.x / cellSize);
+          let gridLocationY = floor(this.y / cellSize);
+          let gridLeftExplosion = floor((this.x / cellSize - 1) - i);
+          let gridRightExplosion = floor((this.x / cellSize + 1) + i);
+          let gridUpExplosion = floor((this.y / cellSize - 1) - i);
+          let gridDownExplosion = floor((this.y / cellSize + 1) + i);
+          
+          
+          grid[gridLocationY][gridLocationX] = "bomb";
+          if (this.x > 0){
+            if (grid[gridLocationY][gridLocationX-1] !== "unbreakable wall"){ //Array left.
+              grid[gridLocationY][gridLeftExplosion] = "explosion";
+            }
           }
-        }
 
-        if (this.x < rows * cellSize){ 
-          if (grid[gridLocationY][gridLocationX+1] !== "unbreakable wall"){ //Array right.
-            grid[gridLocationY][gridRightExplosion] = "explosion";
+          if (this.x < rows * cellSize){ 
+            if (grid[gridLocationY][gridLocationX+1] !== "unbreakable wall"){ //Array right.
+              grid[gridLocationY][gridRightExplosion] = "explosion";
+            }
           }
-        }
-        if (this.y > 0){
-          if (grid[gridLocationY-1][gridLocationX] !== "unbreakable wall"){ //Array up.
-            grid[gridUpExplosion + i][gridLocationX] = "explosion";
+          if (this.y > 0){
+            if (grid[gridLocationY-1][gridLocationX] !== "unbreakable wall"){ //Array up.
+              grid[gridUpExplosion + i][gridLocationX] = "explosion";
+            }
           }
-        }
 
-        if (this.y < 0){
-          if (grid[gridLocationY+1][gridLocationX-1] !== "unbreakable wall"){ //Array down with power-up collected.
-            grid[gridDownExplosion][gridLocationX] = "explosion";
+          if (this.y < 0){
+            if (grid[gridLocationY+1][gridLocationX-1] !== "unbreakable wall"){ //Array down with power-up collected.
+              grid[gridDownExplosion][gridLocationX] = "explosion";
+            }
           }
-        }
 
-        else if (this.y < cols * cellSize - cellSize){
-          if (grid[gridLocationY+1][gridLocationX] !== "unbreakable wall"){ //Array down.
-            grid[gridDownExplosion][gridLocationX] = "explosion";
+          else if (this.y < cols * cellSize - cellSize){
+            if (grid[gridLocationY+1][gridLocationX] !== "unbreakable wall"){ //Array down.
+              grid[gridDownExplosion][gridLocationX] = "explosion";
+            }
           }
         }
-      } 
+      }
+      bombPlaced = false; 
+    }
+    else if(bombPlaced === false){
+      keyCode = 255;
     }
   }
 }
@@ -233,6 +250,7 @@ class Bomb {
 function draw() {
   background(menuBackground);
   gameOver();
+  
   if (state === "mainMenu"){
     mainMenu();
   }
@@ -245,12 +263,15 @@ function draw() {
     bot = new Bomb(playerTwoX * cellSize, playerTwoY * cellSize, rangeUp2);
     bot.display2();
     if (timeToMove){
-      if (millis() > timer + wait){
         computer();
-        timer = millis();
-      }
+        timeToMove = false;
     }
+    else if(millis() > timer + wait){
+      timer = millis();
+      timeToMove = true;
+      keyCode = 32;
   }
+}
 
   //Creates both controllable players.
   else if (state === "Multi"){
@@ -366,18 +387,14 @@ function displayGrid(grid, rows, cols) {
   let cellSize = width / cols;
   for (let y = 0; y < rows; y++) {
     for (let x = 0; x < cols; x++) {
-      if (y === playerOneY && x === playerOneX) {
-        fill("blue");
-        rect(x*cellSize, y*cellSize, cellSize, cellSize);
-      }
 
       //Sets all even positioned spots as unbreakable objects, not including the border.
-      else if (y % 2 !== 0 && x % 2 !== 0){ 
+      if (y % 2 !== 0 && x % 2 !== 0){ 
         grid[y][x] = "unbreakable wall";
         image(wall, x * cellSize, y * cellSize, cellSize, cellSize);
       }
 
-      //Starting zone for both players.
+      //Starting zone for both players. (Yes I know this hurts your eyes to read)
       else if (y === 0 && x === 0 || y === 0 && x === 1 || y === 1 && x === 0 || y === 8 && x === 8 || y === 8 && x === 7 || y === 7 && x === 8){
         grid[y][x] = "open space";
         image(ground, x * cellSize, y * cellSize, cellSize, cellSize); 
@@ -394,17 +411,23 @@ function displayGrid(grid, rows, cols) {
         arrayCheck[y][x] = 1;
         grid[y][x] = "open space";
       }
-
+      
       //Fills all remaining spots as breakable walls that can be affected by bombs.
       else{
         grid[y][x] = "breakable wall";
         image(breakable, x * cellSize, y * cellSize, cellSize, cellSize) 
       }
-
+      
+      //Displays player one in the set coordinates.
+      if (y === playerOneY && x === playerOneX) {
+        grid[y][x] = "player one";
+        image(spriteOne, x * cellSize, y * cellSize, cellSize, cellSize);
+      }
+      
       //Displays player two in the set coordinates.
       if (y === playerTwoY && x === playerTwoX){
-        fill("red");
-        rect(x*cellSize, y*cellSize, cellSize, cellSize);
+        grid[y][x] = "player two";
+        image(spriteTwo, x*cellSize, y*cellSize, cellSize, cellSize);
       }
     }
   }
@@ -467,16 +490,15 @@ function gameOver(){
 //Controls for computer.
 function computer(){
   let move = random(100);
+  
+  //Moves AI in the direction based on random move number, if it has a wall, explosion, or player in its way it will place a bomb.
   if (move <= 25  && playerTwoY > 0){
     if (grid[playerTwoY-1][playerTwoX] === "open space" || grid[playerTwoY-1][playerTwoX] === "explosion"){ //Up
       playerTwoY -= 1;
     }
 
-    else if (grid[playerTwoY-1][playerTwoX] === "breakable wall"){
+    else if (grid[playerTwoY-1][playerTwoX] === "breakable wall" || grid[playerTwoY-1][playerTwoX] === "player one"){
       keyCode = ENTER;
-      if (keyCode === ENTER){
-        keyCode = UP_ARROW;
-      }
     } 
   }
 
@@ -485,11 +507,8 @@ function computer(){
       playerTwoY += 1;
     }
 
-    else if (grid[playerTwoY+1][playerTwoX] === "breakable wall"){
+    else if (grid[playerTwoY+1][playerTwoX] === "breakable wall" || grid[playerTwoY+1][playerTwoX] === "player one"){
       keyCode = ENTER;
-      if (grid[playerOneY+1][playerTwoX] === "explosion"){
-        keyCode = DOWN_ARROW;
-      }
     } 
   }
 
@@ -498,11 +517,8 @@ function computer(){
       playerTwoX -= 1;
     }
 
-    else if (grid[playerTwoY][playerTwoX-1] === "breakable wall"){
+    else if (grid[playerTwoY][playerTwoX-1] === "breakable wall" || grid[playerTwoY][playerTwoX-1] === "player one"){
       keyCode = ENTER;
-      if (grid[playerOneY][playerTwoX-1] === "explosion"){
-        keyCode = LEFT_ARROW;
-      }
     } 
   }
 
@@ -511,11 +527,8 @@ function computer(){
       playerTwoX += 1;
     }
 
-    else if (grid[playerTwoY][playerTwoX+1] === "breakable wall"){
+    else if (grid[playerTwoY][playerTwoX+1] === "breakable wall" || grid[playerTwoY][playerTwoX+1] === "player one"){
       keyCode = ENTER;
-      if (grid[playerOneY][playerTwoX+1] === "explosion"){
-        keyCode = RIGHT_ARROW;
-      }
     } 
   }
 
